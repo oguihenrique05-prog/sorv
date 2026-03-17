@@ -5,17 +5,13 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
    <title>Funil de Vendas - Sorvete Artesanal</title>
   
-   <!-- OTIMIZAÇÃO PAGESPEED: Pré-conexão para fontes -->
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
    
-   <!-- OTIMIZAÇÃO PAGESPEED: Força a primeira imagem a carregar instantaneamente (LCP) -->
    <link rel="preload" href="imagem1.webp" as="image" fetchpriority="high">
 
-   <!-- Tailwind CSS (Adicionado DEFER para não bloquear a renderização e evitar Timeout no Google) -->
    <script src="https://cdn.tailwindcss.com" defer></script>
   
-   <!-- Fontes: Inter e Playfair Display -->
    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,900;1,700;1,900&family=Playfair+Display:ital,wght@1,600;1,700;1,800&display=swap" rel="stylesheet">
 
    <script>
@@ -64,6 +60,173 @@
        } catch (e) {
          return null;
        }
+     }
+
+     function ensureFbp() {
+       var existing = getCookie("_fbp");
+       if (existing) return existing;
+
+       var fbp = "fb.1." + Date.now() + "." + Math.floor(Math.random() * 1e16);
+       setCookie("_fbp", fbp, 90);
+       return fbp;
+     }
+
+     function ensureFbc() {
+       var existing = getCookie("_fbc");
+       if (existing) return existing;
+
+       var fbclid = getQueryParam("fbclid");
+       if (!fbclid) return null;
+
+       var fbc = "fb.1." + Date.now() + "." + fbclid;
+       setCookie("_fbc", fbc, 90);
+       return fbc;
+     }
+
+     function safeResolveUrl(href) {
+       var resolved = href;
+       try { resolved = new URL(href, location.href).href; } catch (e) {}
+       return resolved;
+     }
+
+     function looksLikeCheckout(url) {
+       url = String(url || "");
+       for (var j = 0; j < prefix.length; j++) {
+         if (url.indexOf(prefix[j]) !== -1) return true;
+       }
+       var low = url.toLowerCase();
+       if (low.indexOf("checkout") !== -1 || low.indexOf("pay") !== -1 || low.indexOf("payment") !== -1) return true;
+       return false;
+     }
+
+     function buildUtms() {
+       var r = new URL(location.href);
+       var sid = getOrCreateSid();
+       var out = {};
+
+       out.utm_source = r.searchParams.get("utm_source") || "direto";
+       out.utm_term = "sid:" + sid;
+
+       if (r.searchParams.get("utm_medium")) out.utm_medium = r.searchParams.get("utm_medium");
+       if (r.searchParams.get("utm_campaign")) out.utm_campaign = r.searchParams.get("utm_campaign");
+       if (r.searchParams.get("utm_content")) out.utm_content = r.searchParams.get("utm_content");
+       if (r.searchParams.get("fbclid")) out.fbclid = r.searchParams.get("fbclid");
+
+       return out;
+     }
+
+     function applyUtmsToUrl(resolvedUrl, utms, forceUtmTerm) {
+       try {
+         var u = new URL(resolvedUrl);
+
+         for (var key in utms) {
+           if (!utms.hasOwnProperty(key)) continue;
+           if (!utms[key]) continue;
+
+           if (key === "utm_term") {
+             if (forceUtmTerm) u.searchParams.set("utm_term", utms.utm_term);
+             else if (!u.searchParams.get("utm_term")) u.searchParams.set("utm_term", utms.utm_term);
+             continue;
+           }
+
+           if (!u.searchParams.get(key)) u.searchParams.set(key, utms[key]);
+         }
+
+         return u.toString();
+       } catch (e) {
+         return resolvedUrl;
+       }
+     }
+
+     function sendEvent(payload) {
+       try {
+         if (navigator.sendBeacon) {
+           var blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+           navigator.sendBeacon(TRACK_URL, blob);
+           return;
+         }
+       } catch (e) {}
+
+       fetch(TRACK_URL, {
+         method: "POST",
+         mode: "cors",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify(payload),
+         keepalive: true
+       }).catch(function(){});
+     }
+
+     function postEvent(eventName) {
+       var sid = getOrCreateSid();
+
+       var payload = {
+         pixel_id: PIXEL_PUBLIC_KEY,
+         sid: sid,
+         event: eventName,
+         event_id: eventName + "_" + sid + "_" + Date.now(),
+         url: location.href,
+         utm: buildUtms(),
+         fbp: ensureFbp(),
+         fbc: ensureFbc()
+       };
+
+       sendEvent(payload);
+     }
+
+     function updateLinks() {
+       var utms = buildUtms();
+       var anchors = document.querySelectorAll("a[href]");
+       for (var i = 0; i < anchors.length; i++) {
+         var a = anchors[i];
+         var href = a.getAttribute("href") || "";
+         if (!href) continue;
+
+         var resolved = safeResolveUrl(href);
+         if (!looksLikeCheckout(resolved)) continue;
+
+         a.href = applyUtmsToUrl(resolved, utms, true);
+       }
+     }
+
+     function init() {
+       ensureFbp();
+       updateLinks();
+       postEvent("PageView");
+
+       var tries = 0;
+       var t = setInterval(function () {
+         tries++;
+         updateLinks();
+         if (tries >= 10) clearInterval(t);
+       }, 1000);
+
+       if (window.MutationObserver) {
+         var mo = new MutationObserver(function () { updateLinks(); });
+         mo.observe(document.documentElement, { childList: true, subtree: true });
+       }
+     }
+
+     document.addEventListener("click", function (e) {
+       var el = e.target;
+       var a = el && el.closest ? el.closest("a") : null;
+       if (!a) return;
+
+       var href = a.getAttribute("href") || "";
+       if (!href) return;
+
+       var resolved = safeResolveUrl(href);
+       if (!looksLikeCheckout(resolved)) return;
+
+       var utms = buildUtms();
+       a.href = applyUtmsToUrl(resolved, utms, true);
+
+       postEvent("InitiateCheckout");
+     }, true);
+
+     if (document.readyState === "loading") {
+       document.addEventListener("DOMContentLoaded", init);
+     } else {
+       init();
      }
    })();
    </script>
@@ -137,7 +300,7 @@
        #progressBarContainer { background-color: rgba(0,0,0,0.1); height: 12px; border-radius: 999px; overflow: hidden; width: 100%; }
        #progressBarFill { height: 100%; background-color: #10b981; width: 0%; transition: width 0.1s linear; }
 
-       .text-highlight { color: #db2777; } /* Cor do Sorvete Original, mas mantendo a classe do Picolé */
+       .text-highlight { color: #db2777; }
        .font-serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
        .hidden { display: none !important; }
 
@@ -157,7 +320,6 @@
 </head>
 <body id="mainBody" class="w-full min-h-[100dvh] flex justify-center text-center bg-white-solid transition-colors duration-700">
 
-   <!-- POPUP DE UPSELL (R$ 27) -->
    <div id="upsellPopup" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-md">
        <div class="bg-white rounded-[2rem] shadow-2xl max-w-[380px] w-full p-8 relative text-gray-900 border-4 border-[#10b981] animate-fade">
            <h3 class="text-2xl font-black text-gray-900 mb-2 leading-tight text-center">Leve o Pacote Completo!</h3>
@@ -174,14 +336,13 @@
                <p class="text-xs text-gray-400 line-through font-bold">De R$ 37,00 por apenas</p>
                <p class="text-4xl font-black text-gray-900 leading-tight">R$ 27,00</p>
            </div>
-           <a href="https://lastlink.com/p/C003CF223/checkout-payment/" class="animate-pulse-cta block w-full py-5 btn-green font-black rounded-2xl text-[1.1rem] uppercase shadow-xl mb-4 text-center">SIM! Quero o Completo por R$ 27</a>
-           <a href="https://lastlink.com/p/C0240A49D/checkout-payment/" class="block text-[11px] text-gray-400 font-bold hover:text-gray-600 transition underline text-center">Não, obrigado. Vou ficar só com a apostila básica por R$ 17.</a>
+           <a href="https://confeiteira-mari.pay.yampi.com.br/r/AQE79N3KQE" class="animate-pulse-cta block w-full py-5 btn-green font-black rounded-2xl text-[1.1rem] uppercase shadow-xl mb-4 text-center">SIM! Quero o Completo por R$ 27</a>
+           <a href="https://confeiteira-mari.pay.yampi.com.br/r/17JASRMC9L" class="block text-[11px] text-gray-400 font-bold hover:text-gray-600 transition underline text-center">Não, obrigado. Vou ficar só com a apostila básica por R$ 17.</a>
        </div>
    </div>
 
    <div class="w-full max-w-[420px] min-h-[100dvh] flex flex-col items-center px-6 pt-4 pb-8">
 
-       <!-- VIEW 1: LANDING PAGE -->
        <div id="landingPage" class="w-full flex flex-col items-center animate-fade">
            <div class="w-full pt-8 pb-2 text-center z-30 relative shrink-0">
                <p class="text-[12px] font-black tracking-widest uppercase mb-2 text-highlight">A MAIOR TENDÊNCIA DE 2025:</p>
@@ -190,22 +351,21 @@
                    Um jeito rápido e fácil de <br>
                    <span class="font-black text-highlight italic tracking-wide uppercase text-[22px] md:text-[24px]">GANHAR R$ 100 A R$ 300</span> <br>
                    <span class="font-serif-italic text-highlight font-black text-[2.2rem] leading-tight block my-2">POR DIA NO CALOR</span>
-               <span class="text-[15px] font-medium text-gray-600 block mt-3 leading-relaxed">mesmo <span class="font-bold underline underline-offset-2 text-gray-800">sem experiência</span> na cozinha!</span>
-           </p>
-       </div>
-       <div class="relative w-full flex justify-center items-center z-20 mt-2 shrink-0">
-           <img src="imagem1.webp" fetchpriority="high" decoding="async" alt="Sorvete Artesanal" class="w-[112%] max-w-none h-auto object-contain mix-blend-multiply">
-       </div>
-       <div class="w-full text-center z-30 -mt-4 flex flex-col items-center shrink-0">
-           <p class="text-[16px] md:text-[18px] font-semibold leading-snug mb-6 px-2 text-gray-800">
-               Vou te ensinar <span class="text-highlight font-black text-[18px]">agora</span> como você também pode encher o bolso: <br>
+                   <span class="text-[15px] font-medium text-gray-600 block mt-3 leading-relaxed">mesmo <span class="font-bold underline underline-offset-2 text-gray-800">sem experiência</span> na cozinha!</span>
+               </p>
+           </div>
+           <div class="relative w-full flex justify-center items-center z-20 mt-2 shrink-0">
+               <img src="imagem1.webp" fetchpriority="high" decoding="async" alt="Sorvete Artesanal" class="w-[112%] max-w-none h-auto object-contain mix-blend-multiply">
+           </div>
+           <div class="w-full text-center z-30 -mt-4 flex flex-col items-center shrink-0">
+               <p class="text-[16px] md:text-[18px] font-semibold leading-snug mb-6 px-2 text-gray-800">
+                   Vou te ensinar <span class="text-highlight font-black text-[18px]">agora</span> como você também pode encher o bolso: <br>
                    <strong class="font-black text-[18px] text-gray-900">Neste verão</strong>!
                </p>
                <button type="button" onclick="showQuiz()" class="animate-pulse-cta w-full py-4 px-6 btn-green text-[1.1rem] font-black rounded-2xl uppercase tracking-wide">QUERO APROVEITAR O VERÃO</button>
            </div>
        </div>
 
-       <!-- VIEW 2: QUIZ P1 -->
        <div id="quizPage" class="hidden w-full flex-col items-center justify-center animate-fade">
            <div class="glass-card w-full p-8 text-center mb-8 relative z-30">
                <h2 class="text-2xl font-black text-gray-900 leading-tight mb-2">Você já trabalha com doces ou algo relacionado a <span class="text-highlight">confeitaria?</span></h2>
@@ -219,7 +379,6 @@
            </div>
        </div>
 
-       <!-- VIEW 3: QUIZ P2 -->
        <div id="quizCursoPage" class="hidden w-full flex-col items-center justify-center animate-fade">
            <div class="glass-card w-full p-8 text-center mb-8">
                <h2 class="text-2xl font-black text-gray-900 leading-tight">Já fez algum curso ou treinamento sobre <span class="text-highlight">sorvetes?</span></h2>
@@ -231,7 +390,6 @@
            </div>
        </div>
 
-       <!-- VIEW 4: QUIZ P3 -->
        <div id="quizTempoPage" class="hidden w-full flex-col items-center justify-center animate-fade">
            <div class="glass-card w-full p-8 text-center mb-8">
                <h2 class="text-2xl font-black text-gray-900 leading-tight">Quanto tempo por dia você tem para se <span class="text-highlight">dedicar?</span></h2>
@@ -243,7 +401,6 @@
            </div>
        </div>
 
-       <!-- VIEW 5: QUIZ P4 -->
        <div id="quizDoresPage" class="hidden w-full flex-col items-center justify-center animate-fade">
            <div class="glass-card w-full p-8 text-center mb-8">
                <h2 class="text-2xl font-black text-gray-900 leading-tight">Qual o seu <span class="text-highlight">MAIOR incômodo</span> hoje?</h2>
@@ -255,7 +412,6 @@
            </div>
        </div>
 
-       <!-- VIEW 6: QUIZ P5 -->
        <div id="quizObjetivosPage" class="hidden w-full flex-col items-center justify-center animate-fade">
            <div class="glass-card w-full p-8 text-center mb-8">
                <h2 class="text-2xl font-black text-gray-900 leading-tight">Qual é o seu PRINCIPAL <span class="text-highlight">objetivo?</span></h2>
@@ -267,7 +423,6 @@
            </div>
        </div>
 
-       <!-- VIEW 7: QUIZ P6 (ÚLTIMA) -->
        <div id="quizObjetivoFinalPage" class="hidden w-full flex-col items-center justify-center animate-fade">
            <div class="glass-card w-full p-8 text-center mb-8">
                <h2 class="text-2xl font-black text-gray-900 leading-tight">Última: O que você quer fazer com <span class="text-highlight">os sorvetes?</span></h2>
@@ -279,7 +434,6 @@
            </div>
        </div>
 
-       <!-- VIEW 8: DIFERENCIAIS (MANTENDO A ESTRUTURA, MUDANDO O TEXTO PRO SORVETE) -->
        <div id="finalOfferPage" class="hidden w-full flex-col items-center pt-4 pb-8 animate-fade">
            <div class="glass-card p-6 text-center w-full z-30 relative shrink-0 mb-8 border-t-4 border-t-[#db2777]">
                <h2 class="text-2xl font-black leading-tight text-gray-900 uppercase italic tracking-tighter">
@@ -288,7 +442,6 @@
            </div>
            
            <div class="w-full space-y-4 z-20">
-               <!-- Feature 1 -->
                <div class="bg-gradient-to-r from-[#10b981] to-[#059669] p-1 rounded-2xl shadow-xl transform -rotate-1">
                    <div class="bg-white/95 backdrop-blur-md p-4 rounded-xl flex items-start gap-4 h-full">
                        <div class="text-3xl shrink-0 mt-1">🚫</div>
@@ -299,7 +452,6 @@
                    </div>
                </div>
 
-               <!-- Feature 2 -->
                <div class="bg-white/80 backdrop-blur-md border border-white shadow-sm p-5 rounded-2xl text-left relative overflow-hidden">
                    <div class="absolute top-0 right-0 bg-[#fde047] text-gray-900 text-[9px] font-black px-3 py-1 rounded-bl-lg uppercase tracking-wider">O Segredo</div>
                    <div class="flex items-start gap-3">
@@ -311,7 +463,6 @@
                    </div>
                </div>
 
-               <!-- Feature 3 -->
                <div class="bg-white/80 backdrop-blur-md border border-white shadow-sm p-5 rounded-2xl text-left">
                    <div class="flex items-start gap-3">
                        <div class="text-2xl mt-1">💰</div>
@@ -322,7 +473,6 @@
                    </div>
                </div>
 
-               <!-- Feature 4 -->
                <div class="grid grid-cols-2 gap-3">
                    <div class="bg-white/80 backdrop-blur-md border border-white shadow-sm p-4 rounded-2xl text-center flex flex-col items-center justify-center">
                        <span class="text-3xl mb-2">🥣</span>
@@ -334,7 +484,6 @@
                    </div>
                </div>
 
-               <!-- Feature 5 -->
                <div class="bg-white/80 backdrop-blur-md border border-white shadow-sm p-5 rounded-2xl text-left">
                    <div class="flex items-start gap-3 mb-4 pb-4 border-b border-gray-200">
                        <div class="w-8 h-8 rounded-full bg-[#db2777] flex items-center justify-center text-white font-black shrink-0 border-2 border-white text-sm shadow-sm">⭐</div>
@@ -352,7 +501,6 @@
            </div>
        </div>
 
-       <!-- VIEW 9: PÁGINA DE LUCRO (DADOS DO SORVETE) -->
        <div id="finalPage" class="hidden w-full flex-col items-center pt-4 pb-8 animate-fade text-center">
            <div class="glass-card p-6 text-center w-full z-30 relative shrink-0 mb-6 border-b-4 border-b-[#db2777]">
                <h2 class="text-[2.5rem] font-black leading-tight text-gray-900 italic">A <span class="text-highlight">Matemática</span> do Lucro</h2>
@@ -363,7 +511,6 @@
                    O custo para produzir o Sorvete Artesanal é <strong class="text-highlight">super baixo</strong>. Veja quanto você coloca no bolso:
                </p>
 
-               <!-- Calculadora Visual -->
                <div class="w-full bg-white/90 backdrop-blur-md rounded-3xl p-6 border border-white mb-8 shadow-xl relative">
                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white font-black px-5 py-1.5 rounded-full text-[11px] uppercase tracking-widest shadow-md">LUCRO GARANTIDO</div>
                    
@@ -381,7 +528,6 @@
                    </div>
                </div>
 
-               <!-- Projeção Mensal -->
                <div class="w-full bg-gradient-to-r from-[#10b981] to-[#059669] rounded-[2rem] p-6 mb-8 shadow-xl transform rotate-1 border-2 border-green-300">
                    <p class="text-white/90 font-black text-[13px] uppercase tracking-widest mb-3">Vendendo APENAS 10 potes por dia:</p>
                    <p class="text-white font-black text-[3rem] leading-none drop-shadow-md mb-1">R$ 8.100<span class="text-2xl text-white/80">,00</span></p>
@@ -396,13 +542,11 @@
            </div>
        </div>
 
-       <!-- VIEW 10: DEPOIMENTOS (DADOS DO SORVETE) -->
        <div id="testimonialsPage" class="hidden w-full flex-col items-center pt-4 pb-8 animate-fade text-center">
            <div class="glass-card p-6 text-center w-full shrink-0 mb-8"><h2 class="text-2xl font-black mb-1 text-gray-900 uppercase italic tracking-tighter text-center">O que estão falando na Comunidade:</h2></div>
          
            <div class="w-full space-y-4 mt-8 mb-8 z-20 text-left px-2">
                
-               <!-- Comentário 1 -->
                <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md border border-gray-100 flex gap-3 transform -rotate-1 text-left relative">
                    <div class="w-10 h-10 rounded-full bg-[#d81b60] text-white flex items-center justify-center font-black flex-shrink-0 text-sm shadow-sm">P</div>
                    <div class="flex-1 pb-3">
@@ -421,7 +565,6 @@
                    </div>
                </div>
 
-               <!-- Comentário 2 -->
                <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md border border-gray-100 flex gap-3 transform rotate-1 text-left relative">
                    <div class="w-10 h-10 rounded-full bg-[#3b82f6] text-white flex items-center justify-center font-black flex-shrink-0 text-sm shadow-sm">A</div>
                    <div class="flex-1 pb-3">
@@ -439,7 +582,6 @@
                    </div>
                </div>
 
-               <!-- Comentário 3 -->
                <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md border border-gray-100 flex gap-3 transform -rotate-1 text-left relative">
                    <div class="w-10 h-10 rounded-full bg-[#10b981] text-white flex items-center justify-center font-black flex-shrink-0 text-sm shadow-sm">R</div>
                    <div class="flex-1 pb-3">
@@ -458,7 +600,6 @@
                    </div>
                </div>
 
-               <!-- Comentário 4 -->
                <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md border border-gray-100 flex gap-3 transform rotate-1 text-left relative">
                    <div class="w-10 h-10 rounded-full bg-[#f59e0b] text-white flex items-center justify-center font-black flex-shrink-0 text-sm shadow-sm">M</div>
                    <div class="flex-1 pb-3">
@@ -477,7 +618,6 @@
                    </div>
                </div>
 
-               <!-- Comentário 5 -->
                <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md border border-gray-100 flex gap-3 transform -rotate-1 text-left relative">
                    <div class="w-10 h-10 rounded-full bg-[#8b5cf6] text-white flex items-center justify-center font-black flex-shrink-0 text-sm shadow-sm">F</div>
                    <div class="flex-1 pb-3">
@@ -500,7 +640,6 @@
            <button onclick="showLoadingPage()" class="w-full py-5 px-6 btn-green text-[1.1rem] font-black rounded-xl uppercase tracking-wide shadow-xl">QUERO TER OS MESMOS RESULTADOS</button>
        </div>
 
-       <!-- VIEW 11: LOADING PROFISSIONAL -->
        <div id="loadingPage" class="hidden w-full flex-col items-center justify-center min-h-[85dvh] animate-fade">
            <div class="glass-card p-10 text-center w-full border-2 border-white">
                <div class="w-20 h-20 mx-auto mb-6 bg-white/80 rounded-full flex items-center justify-center border border-gray-200 shadow-md"><span class="text-4xl animate-pulse">🍨</span></div>
@@ -510,7 +649,6 @@
            </div>
        </div>
 
-       <!-- VIEW 12: CHECKOUT FINAL (A ESTRUTURA EXATA DO PICOLÉ COM DADOS DO SORVETE) -->
        <div id="finalCheckoutPage" class="hidden w-full flex-col animate-fade pb-10">
            <div class="bg-white rounded-[2rem] p-6 text-center w-full mb-6 shadow-sm border border-gray-100 text-center">
                <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Seu plano está pronto!<br><span class="text-highlight uppercase text-sm tracking-widest">Leia com ATENÇÃO</span></h2>
@@ -543,7 +681,6 @@
                </div>
            </div>
 
-           <!-- GRID DE RESULTADOS (ESTRUTURA EXATA MANTIDA, COM IMAGENS RELACIONADAS AO SORVETE) -->
            <div class="w-full mb-10 z-20">
                <h3 class="text-gray-900 font-black text-center text-[18px] mb-5 uppercase tracking-tighter italic">
                    Você vai aprender a fazer <br><span class="text-highlight text-[22px]">essas obras de arte:</span>
@@ -556,7 +693,6 @@
                </div>
            </div>
 
-           <!-- BÔNUS (ESTRUTURA EXATA DO PICOLÉ COM TEXTOS DO SORVETE) -->
            <div class="w-full mb-12 z-20">
                <h3 class="text-gray-900 font-black text-center text-[20px] mb-2 uppercase tracking-tighter italic">
                    E não para por aí...
@@ -566,7 +702,6 @@
                </p>
 
                <div class="space-y-5 text-left px-1">
-                   <!-- Bonus 1 -->
                    <div class="bg-white rounded-[1.25rem] p-6 shadow-sm border border-gray-200 relative">
                        <div class="inline-block bg-gray-900 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3 shadow-sm">Bônus #01</div>
                        <h4 class="font-black text-[16px] text-gray-900 mb-2 leading-tight">Geladinho Gourmet</h4>
@@ -577,7 +712,6 @@
                        </div>
                    </div>
 
-                   <!-- Bonus 2 -->
                    <div class="bg-white rounded-[1.25rem] p-6 shadow-sm border border-gray-200 relative">
                        <div class="inline-block bg-gray-900 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3 shadow-sm">Bônus #02</div>
                        <h4 class="font-black text-[16px] text-gray-900 mb-2 leading-tight">Paletas Mexicanas</h4>
@@ -588,7 +722,6 @@
                        </div>
                    </div>
 
-                   <!-- Bonus 3 -->
                    <div class="bg-white rounded-[1.25rem] p-6 shadow-sm border border-gray-200 relative">
                        <div class="inline-block bg-gray-900 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3 shadow-sm">Bônus #03</div>
                        <h4 class="font-black text-[16px] text-gray-900 mb-2 leading-tight">Caldas e Coberturas</h4>
@@ -603,7 +736,6 @@
 
            <h3 class="text-gray-900 font-black text-center text-[18px] mb-6 uppercase tracking-wider italic text-center">ESCOLHA SEU PLANO E COMECE AGORA</h3>
 
-           <!-- PLANO VIP (R$ 37) - DADOS DO SORVETE -->
            <div class="bg-white border-[4px] border-[#10b981] rounded-[2rem] p-6 mb-6 relative shadow-xl text-gray-900 text-left transform hover:scale-[1.02] transition-transform duration-300">
                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#10b981] text-white font-black px-6 py-1.5 rounded-full text-[12px] uppercase shadow-md tracking-wider">MAIS VENDIDO</div>
                
@@ -627,7 +759,7 @@
                    <p id="countdown1" class="text-red-600 font-black text-[11px] mt-3 uppercase italic tracking-wider">Desconto válido por: 01:43</p>
                </div>
                
-               <a href="https://lastlink.com/p/C8CE27654/checkout-payment/" class="animate-pulse-cta block w-full py-5 bg-[#10b981] text-white font-black rounded-2xl text-center uppercase tracking-wider shadow-lg text-[1.15rem] italic hover:bg-[#059669] transition-colors">QUERO O PACOTE COMPLETO</a>
+               <a href="https://confeiteira-mari.pay.yampi.com.br/r/FRIA4GCN1E" class="animate-pulse-cta block w-full py-5 bg-[#10b981] text-white font-black rounded-2xl text-center uppercase tracking-wider shadow-lg text-[1.15rem] italic hover:bg-[#059669] transition-colors">QUERO O PACOTE COMPLETO</a>
                
                <div class="mt-5 flex flex-col items-center justify-center">
                    <div class="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
@@ -641,7 +773,6 @@
                </div>
            </div>
 
-           <!-- PLANO BÁSICO (R$ 17) -->
            <div class="bg-white rounded-[2rem] p-6 mb-4 shadow-md border-2 border-gray-100 text-gray-900 text-left">
                <h4 class="text-[16px] font-black text-center italic uppercase tracking-tighter text-gray-800">APOSTILA DIGITAL (E-BOOK)</h4>
                
@@ -658,14 +789,12 @@
                </div>
            </div>
 
-           <!-- TIMER DE ALERTA -->
            <div class="animate-alert w-full p-4 rounded-2xl mb-8 bg-red-600 text-white text-center shadow-lg border-2 border-red-700 text-center">
                <p class="text-[10px] font-black uppercase tracking-[0.2em] mb-1 text-center">⚠️ ATENÇÃO: Oferta Expirando</p>
                <h3 class="text-2xl font-black tracking-tighter text-center" id="countdown2">03:00</h3>
                <p class="text-[9px] font-bold opacity-90 mt-1 uppercase italic text-center">Esta é a última chance de levar o plano básico com desconto!</p>
            </div>
 
-           <!-- FAQ MANTIDO DA ESTRUTURA, COM TEXTOS ADAPTADOS PRO SORVETE -->
            <div class="w-full text-left mb-10 z-20">
                <h3 class="text-gray-900 font-black text-center text-[18px] mb-5 uppercase tracking-tighter italic">Dúvidas Frequentes:</h3>
                <div class="space-y-3">
@@ -684,7 +813,6 @@
                </div>
            </div>
 
-           <!-- GARANTIA (IMAGEM E TEXTO DO SORVETE) -->
            <div class="flex flex-col items-center justify-center mb-10 text-center">
                <img src="http://cursou.site/wp-content/uploads/2025/04/selo-garantia-7-dias-300x300-1.webp" loading="lazy" decoding="async" class="w-40 mb-3 text-center" alt="Garantia de 7 Dias">
                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest text-center italic">Garantia incondicional de 7 dias. Seu risco é zero.</p>
@@ -692,18 +820,13 @@
 
            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-full py-5 btn-green font-black rounded-[2rem] uppercase tracking-wide shadow-xl mb-10 text-lg italic text-center">Quero lucrar neste verão!</button>
 
-           <!-- BIO MARI -->
            <div class="glass-card p-8 mb-10 text-center border border-white text-center">
                <img src="http://cursou.site/wp-content/uploads/2025/10/CONFEITEIRAMARIAMR.webp" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-white shadow-md">
                <h4 class="text-highlight font-serif-italic text-3xl mb-4 italic leading-none text-center">Mari Farias -</h4>
                <p class="text-[14px] leading-relaxed font-bold text-gray-700 px-2 mb-6 italic text-center text-center">Criadora do Treinamento Sorveteria em Casa, especialista em confeitaria desde 2019.<br><br>Comecei vendendo geladinhos na porta de casa, mas logo percebi o potencial incrível que o sorvete de massa tem para gerar renda com criatividade e pouco investimento. ✨</p>
                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-full py-4 bg-white text-[#db2777] font-black rounded-2xl uppercase text-[12px] shadow-sm tracking-widest italic text-center border border-gray-200">Quero viver trabalhando de casa!</button>
            </div>
-       </div> <!-- FIM FINAL CHECKOUT PAGE -->
-
-   </div> <!-- FIM WRAPPER PRINCIPAL -->
-
-   <script>
+       </div> </div> <script>
        const ALL_VIEWS = ['landingPage', 'quizPage', 'quizCursoPage', 'quizTempoPage', 'quizDoresPage', 'quizObjetivosPage', 'quizObjetivoFinalPage', 'finalOfferPage', 'finalPage', 'testimonialsPage', 'loadingPage', 'finalCheckoutPage'];
       
        function hideAllViews() {
