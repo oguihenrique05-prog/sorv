@@ -291,17 +291,15 @@
 </head>
 <body class="w-full flex flex-col items-center">
 
-   <!-- BARRA DE AVISO TOPO -->
-   <div class="w-full bg-[#ef4444] text-white text-center py-2 text-[11px] font-bold tracking-widest uppercase z-50 shadow-sm">
-       ⚠️ Atenção: Desconto de Verão Encerrando!
-   </div>
-
    <!-- POPUP DE UPSELL (DOWNSELL OCULTO PARA 19,90) -->
    <div id="upsellPopup" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
        <div class="bg-white rounded-2xl shadow-2xl max-w-[400px] w-full p-6 relative text-gray-900 border-t-8 border-[#10b981] animate-fade">
            
+           <!-- BOTÃO FECHAR (X) -->
+           <button onclick="closeUpsell()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-700 transition text-2xl font-black leading-none" aria-label="Fechar">&times;</button>
+           
            <!-- Barra de progresso falsa -->
-           <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+           <div class="w-full bg-gray-200 rounded-full h-2 mb-4 mt-2">
              <div class="bg-[#10b981] h-2 rounded-full w-[80%] animate-pulse"></div>
            </div>
            
@@ -338,7 +336,7 @@
        </div>
    </div>
 
-   <!-- WRAPPER MOBILE FIRST (Removida a sombra 'shadow-2xl' para fundir com a página) -->
+   <!-- WRAPPER MOBILE FIRST -->
    <div class="w-full max-w-[480px] flex flex-col items-center bg-white relative min-h-screen">
 
        <!-- HERO SECTION -->
@@ -356,16 +354,16 @@
            <div class="mb-4 text-center">
                <p class="text-[11px] text-gray-500 font-bold uppercase tracking-widest mb-1">Por Apenas...</p>
                <p class="text-brand text-[2.5rem] font-black leading-none">R$ 14,90</p>
-               <p class="text-[11px] text-gray-500 mt-1">pagamento único com acesso imediato</p>
+               <p class="text-[11px] text-gray-500 mt-1">pagamento único com acesso imediato via WhatsApp</p>
            </div>
 
            <button onclick="document.getElementById('checkoutSection').scrollIntoView({behavior: 'smooth'})" class="animate-pulse-btn w-full py-4 px-6 btn-primary font-black text-[1.1rem] rounded-xl uppercase tracking-wider mb-8">
                QUERO COMEÇAR A LUCRAR
            </button>
 
-           <!-- IMAGEM HERO COM GLOW SUAVE -->
-           <div class="relative w-full flex justify-center items-center glow-image rounded-2xl bg-white border border-gray-100 p-1">
-               <img src="imagem1.webp" fetchpriority="high" decoding="async" alt="Sorvete Artesanal" class="w-full h-auto object-cover rounded-xl">
+           <!-- IMAGEM HERO (SOLTA/TRANSPARENTE) -->
+           <div class="relative w-full flex justify-center items-center mb-4">
+               <img src="imagem1.webp" fetchpriority="high" decoding="async" alt="Sorvete Artesanal" class="w-full h-auto">
            </div>
        </div>
 
@@ -416,8 +414,8 @@
                        <span class="text-brand text-xs font-black">✔</span>
                    </div>
                    <div>
-                       <h4 class="font-bold text-gray-900 text-[15px] mb-1">+50 Sabores Gourmet</h4>
-                       <p class="text-[13px] text-gray-600 leading-relaxed">De Ninho com Nutella a Pudim. Um cardápio completo para você vender no iFood ou WhatsApp todo dia.</p>
+                       <h4 class="font-bold text-gray-900 text-[15px] mb-1">+15 Sabores Gourmet</h4>
+                       <p class="text-[13px] text-gray-600 leading-relaxed">De Ninho com Nutella a Pudim. Um cardápio enxuto e lucrativo para você vender no iFood ou WhatsApp todo dia.</p>
                    </div>
                </div>
            </div>
@@ -446,7 +444,7 @@
            
            <!-- PRODUTO PRINCIPAL -->
            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8 relative mt-2 mb-10">
-               <div class="absolute top-0 right-0 bg-[#fbbf24] text-gray-900 font-black px-4 py-1.5 rounded-bl-xl text-[10px] uppercase tracking-widest">ACESSO IMEDIATO</div>
+               <div class="absolute top-0 right-0 bg-[#fbbf24] text-gray-900 font-black px-4 py-1.5 rounded-bl-xl text-[10px] uppercase tracking-widest">ACESSO IMEDIATO VIA WHATSAPP</div>
                
                <h3 class="text-[18px] md:text-[20px] font-black text-center text-gray-900 mb-6 leading-tight mt-2">
                    Tudo que você vai receber no<br>Método <span class="text-brand">Sorveteria em Casa:</span>
@@ -456,7 +454,7 @@
                    <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Treinamento Completo com Aulas Gravadas</span></li>
                    <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Passo a passo para vender seus primeiros potes em 24h</span></li>
                    <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Técnica da <strong class="text-brand">Massa Base</strong> que rende muito</span></li>
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Mais de <strong class="text-brand">50 Sabores Gourmet</strong></span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Mais de <strong class="text-brand">15 Sabores Gourmet</strong></span></li>
                    <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Ferramenta secreta para vender todo dia no WhatsApp</span></li>
                    <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Calculadora para precificar seus sorvetes</span></li>
                    <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Acesso vitalício ao material</span></li>
@@ -586,12 +584,12 @@
                
                <!-- IMAGEM DO PRODUTO (LIMPA E SEM CAIXA) -->
                <div class="flex justify-center my-4">
-                   <img src="imagem1.webp" alt="Pacote VIP Sorveteria" class="h-28 w-auto transform hover:scale-105 transition-transform duration-300">
+                   <img src="imagem27.webp" alt="Pacote VIP Sorveteria" class="h-28 w-auto transform hover:scale-105 transition-transform duration-300">
                </div>
                
                <div class="space-y-3 my-5 font-medium text-[12px] text-gray-700">
                    <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Vídeo Aulas Passo a Passo</span></p>
-                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Técnica da Massa Base e +50 Sabores</span></p>
+                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Técnica da Massa Base e +15 Sabores</span></p>
                    <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Calculadora Automática de Lucro</span></p>
                    <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Os 8 Presentes Exclusivos Inclusos</span></p>
                    <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Certificado Oficial</span></p>
@@ -646,7 +644,7 @@
                        <span>Como vou receber o material?</span>
                        <span class="transition group-open:rotate-180 text-brand">▼</span>
                    </summary>
-                   <p class="text-[12px] text-gray-600 mt-3 leading-snug border-t border-gray-100 pt-3">Imediatamente após o pagamento ser aprovado, você receberá um e-mail da plataforma com seu login e senha para acessar todas as aulas em vídeo e baixar as apostilas digitais.</p>
+                   <p class="text-[12px] text-gray-600 mt-3 leading-snug border-t border-gray-100 pt-3">Imediatamente após o pagamento ser aprovado, você receberá o acesso diretamente no seu WhatsApp e também no e-mail para baixar tudo na hora.</p>
                </details>
 
                <details class="group card-light p-4 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
@@ -703,7 +701,7 @@
            <!-- Trust Badges -->
            <div class="flex flex-col items-center gap-2 text-[11px] text-gray-500 mb-10 text-center font-medium">
                <p class="flex items-center gap-1.5"><span class="text-[#10b981] text-sm">🛡️</span> Garantia de 7 dias • Pagamento Seguro</p>
-               <p>Acesso instantâneo • Receba pelo e-mail • Suporte incluso</p>
+               <p>Acesso instantâneo • Receba pelo WhatsApp • Suporte incluso</p>
            </div>
 
            <div class="w-full h-px bg-gray-200 mb-8"></div>
