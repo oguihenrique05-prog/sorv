@@ -3,14 +3,15 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-   <title>Funil de Vendas - Sorvete Artesanal</title>
+   <title>Sorveteria em Casa - Venda Todo Dia</title>
   
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
    
    <link rel="preload" href="imagem1.webp" as="image" fetchpriority="high">
 
-   <script src="https://cdn.tailwindcss.com" defer></script>
+   <!-- REMOVIDO O DEFER AQUI: Garante que o CSS carrega antes de mostrar a tela -->
+   <script src="https://cdn.tailwindcss.com"></script>
   
    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,900;1,700;1,900&family=Playfair+Display:ital,wght@1,600;1,700;1,800&display=swap" rel="stylesheet">
 
@@ -232,737 +233,533 @@
    </script>
 
    <style>
+       html { scroll-behavior: smooth; }
+       
        body {
            font-family: 'Inter', sans-serif;
-           color: #111827; 
+           background-color: #ffffff; /* Fundo branco puro para remover o efeito de caixa */
+           color: #111827; /* Texto escuro primário */
            margin: 0;
            padding: 0;
            overflow-x: hidden;
            -webkit-font-smoothing: antialiased;
        }
 
-       /* Dinâmica de Fundo: Branca na Landing, Glass no Quiz */
-       .bg-white-solid {
+       /* Tema de cores focado no Light + Pink/Green (Alta Conversão) */
+       .text-brand { color: #db2777; } /* Pink 600 do Sorvete */
+       .bg-brand { background-color: #db2777; }
+       
+       .card-light {
            background-color: #ffffff;
-           background-image: none;
+           border: 1px solid #e5e7eb;
+           border-radius: 12px;
+           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
        }
 
-       .bg-pink-glass {
-           background-color: #fdf2f8; 
-           background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.8) 0%, rgba(253, 242, 248, 0) 70%);
+       /* Brilho da Imagem Hero (Sutil e Elegante) */
+       .glow-image {
+           box-shadow: 0 15px 40px -10px rgba(219, 39, 119, 0.25);
        }
 
-       .glass-card {
-           background: rgba(255, 255, 255, 0.65); 
-           backdrop-filter: blur(16px);
-           -webkit-backdrop-filter: blur(16px);
-           border: 1px solid rgba(255, 255, 255, 0.9);
-           border-radius: 1.5rem;
-           box-shadow: 0 15px 35px -10px rgba(190, 24, 93, 0.1); 
-       }
-
-       .blend-image {
-           -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%);
-           mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%);
-       }
-
-       .btn-green {
-           background-color: #10b981;
+       /* Botão Pulsante Verde (Cor universal de Compra) */
+       .btn-primary {
+           background: linear-gradient(to right, #10b981, #059669);
            color: white;
            transition: all 0.2s ease-in-out;
-           box-shadow: 0 8px 15px -5px rgba(16, 185, 129, 0.4);
+           box-shadow: 0 8px 25px -5px rgba(16, 185, 129, 0.4);
        }
-       .btn-green:active, .btn-green:hover { background-color: #059669; transform: scale(0.98); }
+       .btn-primary:active { transform: scale(0.96); }
 
-       @keyframes pulse-cta {
-           0% { transform: scale(1); }
-           50% { transform: scale(1.04); }
-           100% { transform: scale(1); }
+       @keyframes pulse-btn {
+           0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+           50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+           100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
        }
-       .animate-pulse-cta { animation: pulse-cta 2s infinite ease-in-out; }
+       .animate-pulse-btn { animation: pulse-btn 2.5s infinite; }
 
-       @keyframes alert-pulse {
-           0% { opacity: 1; }
-           50% { opacity: 0.85; }
-           100% { opacity: 1; }
-       }
-       .animate-alert { animation: alert-pulse 1.5s infinite ease-in-out; }
-
-       .quiz-btn {
-           background-color: #ffffff;
-           color: #111827;
-           transition: all 0.2s ease;
-           box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-           border: 1px solid rgba(0,0,0,0.05);
-       }
-       .quiz-btn:active, .quiz-btn:hover { background-color: #fce7f3; transform: scale(0.98); border-color: #fbcfe8; }
-
-       #progressBarContainer { background-color: rgba(0,0,0,0.1); height: 12px; border-radius: 999px; overflow: hidden; width: 100%; }
-       #progressBarFill { height: 100%; background-color: #10b981; width: 0%; transition: width 0.1s linear; }
-
-       .text-highlight { color: #db2777; }
-       .font-serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
-       .hidden { display: none !important; }
-
-       @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-       .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
-
-       .scroll-fade {
+       /* Animação de entrada no scroll */
+       .fade-up {
            opacity: 0;
-           transform: translateY(30px);
-           transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+           transform: translateY(20px);
+           transition: opacity 0.6s ease-out, transform 0.6s ease-out;
        }
-       .scroll-fade.is-visible {
+       .fade-up.is-visible {
            opacity: 1;
            transform: translateY(0);
        }
    </style>
 </head>
-<body id="mainBody" class="w-full min-h-[100dvh] flex justify-center text-center bg-white-solid transition-colors duration-700">
+<body class="w-full flex flex-col items-center">
 
-   <div id="upsellPopup" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-md">
-       <div class="bg-white rounded-[2rem] shadow-2xl max-w-[380px] w-full p-8 relative text-gray-900 border-4 border-[#10b981] animate-fade">
-           <h3 class="text-2xl font-black text-gray-900 mb-2 leading-tight text-center">Leve o Pacote Completo!</h3>
-           <p class="text-[13px] text-gray-600 font-medium mb-6 leading-relaxed px-4 text-center">
-               Você escolheu a opção básica, mas por apenas <strong class="text-green-600">R$ 10,00 a mais</strong> você leva TUDO:
+   <!-- BARRA DE AVISO TOPO -->
+   <div class="w-full bg-[#ef4444] text-white text-center py-2 text-[11px] font-bold tracking-widest uppercase z-50 shadow-sm">
+       ⚠️ Atenção: Desconto de Verão Encerrando!
+   </div>
+
+   <!-- POPUP DE UPSELL (DOWNSELL OCULTO PARA 19,90) -->
+   <div id="upsellPopup" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+       <div class="bg-white rounded-2xl shadow-2xl max-w-[400px] w-full p-6 relative text-gray-900 border-t-8 border-[#10b981] animate-fade">
+           
+           <!-- Barra de progresso falsa -->
+           <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+             <div class="bg-[#10b981] h-2 rounded-full w-[80%] animate-pulse"></div>
+           </div>
+           
+           <p class="text-red-500 font-black text-center text-[13px] uppercase tracking-widest mb-1">🚨 ESPERE! NÃO FECHE A PÁGINA</p>
+           <h3 class="text-2xl font-black text-gray-900 mb-3 leading-tight text-center">Você desbloqueou um<br><span class="text-brand">Desconto Secreto!</span></h3>
+           
+           <p class="text-[13px] text-gray-600 font-medium mb-5 leading-relaxed text-center">
+               Em vez de pagar R$ 14,90 apenas pelo básico, que tal adicionar <strong class="text-[#10b981] bg-green-50 px-1 rounded">apenas R$ 5,00</strong> e levar o <strong class="text-gray-900">TREINAMENTO VIP COMPLETO</strong>? É um acréscimo ridículo para ter acesso a tudo:
            </p>
-           <div class="bg-gray-50 p-5 rounded-2xl text-left mb-6 space-y-3 shadow-inner">
-               <p class="flex items-center gap-3 text-[13px] font-bold text-gray-700 leading-tight text-left">✔ Aulas em Vídeo Passo a Passo</p>
-               <p class="flex items-center gap-3 text-[13px] font-bold text-gray-700 leading-tight text-left">✔ Apostila Digital Completa</p>
-               <p class="flex items-center gap-3 text-[13px] font-bold text-gray-700 leading-tight text-left">✔ Todos os 3 Bônus Exclusivos</p>
-               <p class="flex items-center gap-3 text-[13px] font-bold text-gray-700 leading-tight text-left">✔ Certificado Incluso</p>
+
+           <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl text-left mb-5 space-y-2.5 shadow-inner">
+               <p class="flex items-start gap-2 text-[12px] font-bold text-gray-700"><span class="text-[#10b981] text-base leading-none">✔</span> <span>Aulas em Vídeo (Ver na Prática)</span></p>
+               <p class="flex items-start gap-2 text-[12px] font-bold text-gray-700"><span class="text-[#10b981] text-base leading-none">✔</span> <span>Apostila Digital Completa</span></p>
+               <p class="flex items-start gap-2 text-[12px] font-bold text-gray-700"><span class="text-[#10b981] text-base leading-none">✔</span> <span>Todos os 2 Bônus Extras</span></p>
+               <p class="flex items-start gap-2 text-[12px] font-bold text-gray-700"><span class="text-[#10b981] text-base leading-none">✔</span> <span>Certificado Oficial</span></p>
            </div>
-           <div class="mb-8 text-center">
-               <p class="text-xs text-gray-400 line-through font-bold">De R$ 37,00 por apenas</p>
-               <p class="text-4xl font-black text-gray-900 leading-tight">R$ 27,00</p>
+
+           <div class="flex items-center justify-center gap-3 mb-5">
+               <div class="text-right">
+                   <p class="text-[10px] text-gray-400 line-through font-bold uppercase tracking-wider">De R$ 27,90 por</p>
+                   <p class="text-3xl font-black text-[#10b981] leading-none">R$ 19<span class="text-xl">,90</span></p>
+               </div>
            </div>
-           <a href="https://confeiteira-mari.pay.yampi.com.br/r/AQE79N3KQE" class="animate-pulse-cta block w-full py-5 btn-green font-black rounded-2xl text-[1.1rem] uppercase shadow-xl mb-4 text-center">SIM! Quero o Completo por R$ 27</a>
-           <a href="https://confeiteira-mari.pay.yampi.com.br/r/17JASRMC9L" class="block text-[11px] text-gray-400 font-bold hover:text-gray-600 transition underline text-center">Não, obrigado. Vou ficar só com a apostila básica por R$ 17.</a>
+           
+           <!-- ATENÇÃO: COLOQUE AQUI O SEU LINK DA YAMPI PARA O PRODUTO DE R$ 19,90 -->
+           <a href="https://confeiteira-mari.pay.yampi.com.br/r/AQE79N3KQE" class="animate-pulse-btn block w-full py-4 btn-primary font-black rounded-xl text-[1.05rem] uppercase text-center mb-3">
+               SIM! QUERO TUDO POR R$ 19,90
+           </a>
+           
+           <!-- LINK DO PRODUTO BÁSICO DE 14,90 -->
+           <a href="https://confeiteira-mari.pay.yampi.com.br/r/17JASRMC9L" class="block text-[11px] text-gray-400 font-medium hover:text-gray-600 transition text-center px-4 leading-tight underline">
+               Não, obrigado. Quero perder os vídeos e bônus e ficar só com o e-book por R$ 14,90.
+           </a>
        </div>
    </div>
 
-   <div class="w-full max-w-[420px] min-h-[100dvh] flex flex-col items-center px-6 pt-4 pb-8">
+   <!-- WRAPPER MOBILE FIRST (Removida a sombra 'shadow-2xl' para fundir com a página) -->
+   <div class="w-full max-w-[480px] flex flex-col items-center bg-white relative min-h-screen">
 
-       <div id="landingPage" class="w-full flex flex-col items-center animate-fade">
-           <div class="w-full pt-8 pb-2 text-center z-30 relative shrink-0">
-               <p class="text-[12px] font-black tracking-widest uppercase mb-2 text-highlight">A MAIOR TENDÊNCIA DE 2025:</p>
-               <h1 class="text-[3rem] font-black italic leading-none tracking-tighter mb-5 text-gray-900">Sorvete<br>Artesanal</h1>
-               <p class="text-[20px] md:text-[22px] font-bold leading-snug text-gray-800 px-2">
-                   Um jeito rápido e fácil de <br>
-                   <span class="font-black text-highlight italic tracking-wide uppercase text-[22px] md:text-[24px]">GANHAR R$ 100 A R$ 300</span> <br>
-                   <span class="font-serif-italic text-highlight font-black text-[2.2rem] leading-tight block my-2">POR DIA NO CALOR</span>
-                   <span class="text-[15px] font-medium text-gray-600 block mt-3 leading-relaxed">mesmo <span class="font-bold underline underline-offset-2 text-gray-800">sem experiência</span> na cozinha!</span>
-               </p>
-           </div>
-           <div class="relative w-full flex justify-center items-center z-20 mt-2 shrink-0">
-               <img src="imagem1.webp" fetchpriority="high" decoding="async" alt="Sorvete Artesanal" class="w-[112%] max-w-none h-auto object-contain mix-blend-multiply">
-           </div>
-           <div class="w-full text-center z-30 -mt-4 flex flex-col items-center shrink-0">
-               <p class="text-[16px] md:text-[18px] font-semibold leading-snug mb-6 px-2 text-gray-800">
-                   Vou te ensinar <span class="text-highlight font-black text-[18px]">agora</span> como você também pode encher o bolso: <br>
-                   <strong class="font-black text-[18px] text-gray-900">Neste verão</strong>!
-               </p>
-               <button type="button" onclick="showQuiz()" class="animate-pulse-cta w-full py-4 px-6 btn-green text-[1.1rem] font-black rounded-2xl uppercase tracking-wide">QUERO APROVEITAR O VERÃO</button>
-           </div>
-       </div>
-
-       <div id="quizPage" class="hidden w-full flex-col items-center justify-center animate-fade">
-           <div class="glass-card w-full p-8 text-center mb-8 relative z-30">
-               <h2 class="text-2xl font-black text-gray-900 leading-tight mb-2">Você já trabalha com doces ou algo relacionado a <span class="text-highlight">confeitaria?</span></h2>
-               <p class="text-gray-500 font-medium text-[14px]">Toque na sua resposta:</p>
-           </div>
-           <div class="w-full space-y-3 z-20">
-               <button onclick="showQuestion2()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl transition-transform active:scale-95"><div class="flex items-center gap-3"><span class="text-2xl">🏆</span><span class="font-bold text-[15px]">Sim, já vendo doces</span></div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion2()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl transition-transform active:scale-95"><div class="flex items-center gap-3"><span class="text-2xl">😁</span><span class="font-bold text-[15px]">Sim, faço por hobby ou família</span></div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion2()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl transition-transform active:scale-95"><div class="flex items-center gap-3"><span class="text-2xl">🤔</span><span class="font-bold text-[15px]">Não, mas quero aprender!</span></div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion2()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl transition-transform active:scale-95"><div class="flex items-center gap-3"><span class="text-2xl">😥</span><span class="font-bold text-[15px]">Só quero aprender a fazer!</span></div><span class="text-highlight font-black text-xl">></span></button>
-           </div>
-       </div>
-
-       <div id="quizCursoPage" class="hidden w-full flex-col items-center justify-center animate-fade">
-           <div class="glass-card w-full p-8 text-center mb-8">
-               <h2 class="text-2xl font-black text-gray-900 leading-tight">Já fez algum curso ou treinamento sobre <span class="text-highlight">sorvetes?</span></h2>
-           </div>
-           <div class="w-full space-y-3">
-               <button onclick="showQuestion3()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">😂</span> Nunca fiz, será o primeiro</div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion3()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">📖</span> Já fiz um curso</div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion3()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">🎓</span> Já fiz vários cursos</div><span class="text-highlight font-black text-xl">></span></button>
-           </div>
-       </div>
-
-       <div id="quizTempoPage" class="hidden w-full flex-col items-center justify-center animate-fade">
-           <div class="glass-card w-full p-8 text-center mb-8">
-               <h2 class="text-2xl font-black text-gray-900 leading-tight">Quanto tempo por dia você tem para se <span class="text-highlight">dedicar?</span></h2>
-           </div>
-           <div class="w-full space-y-3">
-               <button onclick="showQuestion4()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">⏳</span> 15 min a 1 hora (só um extra)</div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion4()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">🕒</span> 3 a 4 horas por dia</div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion4()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">☀️</span> Tenho o dia todo livre!</div><span class="text-highlight font-black text-xl">></span></button>
-           </div>
-       </div>
-
-       <div id="quizDoresPage" class="hidden w-full flex-col items-center justify-center animate-fade">
-           <div class="glass-card w-full p-8 text-center mb-8">
-               <h2 class="text-2xl font-black text-gray-900 leading-tight">Qual o seu <span class="text-highlight">MAIOR incômodo</span> hoje?</h2>
-           </div>
-           <div class="w-full space-y-3">
-               <button onclick="showQuestion5()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">💸</span> Não sobra dinheiro para lazer</div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion5()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">😓</span> Contas apertadas e rotina chata</div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion5()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">🚨</span> Preciso de um extra URGENTE!</div><span class="text-highlight font-black text-xl">></span></button>
-           </div>
-       </div>
-
-       <div id="quizObjetivosPage" class="hidden w-full flex-col items-center justify-center animate-fade">
-           <div class="glass-card w-full p-8 text-center mb-8">
-               <h2 class="text-2xl font-black text-gray-900 leading-tight">Qual é o seu PRINCIPAL <span class="text-highlight">objetivo?</span></h2>
-           </div>
-           <div class="w-full space-y-3">
-               <button onclick="showQuestion6()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">📈</span> Ter uma Renda Extra garantida</div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion6()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">🎯</span> Dinheiro rápido no verão</div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showQuestion6()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">🤠</span> Ter dinheiro para viajar/curtir</div><span class="text-highlight font-black text-xl">></span></button>
-           </div>
-       </div>
-
-       <div id="quizObjetivoFinalPage" class="hidden w-full flex-col items-center justify-center animate-fade">
-           <div class="glass-card w-full p-8 text-center mb-8">
-               <h2 class="text-2xl font-black text-gray-900 leading-tight">Última: O que você quer fazer com <span class="text-highlight">os sorvetes?</span></h2>
-           </div>
-           <div class="w-full space-y-3">
-               <button onclick="showFinalOffer()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">🔥</span> Aprender a vender MUITO neste calor</div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showFinalOffer()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">🥂</span> Ter uma fonte de renda extra segura</div><span class="text-highlight font-black text-xl">></span></button>
-               <button onclick="showFinalOffer()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">🎓</span> Apenas fazer para a família</div><span class="text-highlight font-black text-xl">></span></button>
-           </div>
-       </div>
-
-       <div id="finalOfferPage" class="hidden w-full flex-col items-center pt-4 pb-8 animate-fade">
-           <div class="glass-card p-6 text-center w-full z-30 relative shrink-0 mb-8 border-t-4 border-t-[#db2777]">
-               <h2 class="text-2xl font-black leading-tight text-gray-900 uppercase italic tracking-tighter">
-                   Mas precisa de <br><span class="text-highlight text-3xl">Máquina Cara?</span>
-               </h2>
-           </div>
+       <!-- HERO SECTION -->
+       <div class="w-full flex flex-col items-center pt-10 pb-8 px-5 z-10 relative">
            
-           <div class="w-full space-y-4 z-20">
-               <div class="bg-gradient-to-r from-[#10b981] to-[#059669] p-1 rounded-2xl shadow-xl transform -rotate-1">
-                   <div class="bg-white/95 backdrop-blur-md p-4 rounded-xl flex items-start gap-4 h-full">
-                       <div class="text-3xl shrink-0 mt-1">🚫</div>
-                       <div>
-                           <h4 class="font-black text-gray-900 text-[14px] uppercase italic tracking-tight mb-1">A resposta é Não!</h4>
-                           <p class="text-[13px] font-bold text-gray-700 leading-snug text-left">Com apenas um liquidificador ou batedeira comum, você faz sorvetes de qualidade profissional.</p>
-                       </div>
-                   </div>
-               </div>
-
-               <div class="bg-white/80 backdrop-blur-md border border-white shadow-sm p-5 rounded-2xl text-left relative overflow-hidden">
-                   <div class="absolute top-0 right-0 bg-[#fde047] text-gray-900 text-[9px] font-black px-3 py-1 rounded-bl-lg uppercase tracking-wider">O Segredo</div>
-                   <div class="flex items-start gap-3">
-                       <div class="text-2xl mt-1">🤫</div>
-                       <div>
-                           <h4 class="text-highlight font-black text-[15px] mb-1">Técnica da Massa Base</h4>
-                           <p class="text-[13px] font-medium text-gray-700 leading-snug">No meu método, você aprende o segredo da massa que rende muito e não cristaliza de jeito nenhum!</p>
-                       </div>
-                   </div>
-               </div>
-
-               <div class="bg-white/80 backdrop-blur-md border border-white shadow-sm p-5 rounded-2xl text-left">
-                   <div class="flex items-start gap-3">
-                       <div class="text-2xl mt-1">💰</div>
-                       <div>
-                           <h4 class="text-highlight font-black text-[15px] mb-1">Custo baixo, Margem Alta</h4>
-                           <p class="text-[13px] font-medium text-gray-700 leading-snug">Produza pagando centavos por bola e venda com preço de <strong class="text-gray-900 font-bold">sorveteria premium</strong>.</p>
-                       </div>
-                   </div>
-               </div>
-
-               <div class="grid grid-cols-2 gap-3">
-                   <div class="bg-white/80 backdrop-blur-md border border-white shadow-sm p-4 rounded-2xl text-center flex flex-col items-center justify-center">
-                       <span class="text-3xl mb-2">🥣</span>
-                       <p class="text-[12px] font-bold text-gray-700 leading-tight"><strong class="text-highlight">Fácil Produção</strong><br>Sem sujeira, basta bater tudo e congelar!</p>
-                   </div>
-                   <div class="bg-white/80 backdrop-blur-md border border-white shadow-sm p-4 rounded-2xl text-center flex flex-col items-center justify-center">
-                       <span class="text-3xl mb-2">🍓</span>
-                       <p class="text-[12px] font-bold text-gray-700 leading-tight"><strong class="text-highlight">+50 Sabores</strong><br>De Ninho com Nutella a Sorvete de Pudim.</p>
-                   </div>
-               </div>
-
-               <div class="bg-white/80 backdrop-blur-md border border-white shadow-sm p-5 rounded-2xl text-left">
-                   <div class="flex items-start gap-3 mb-4 pb-4 border-b border-gray-200">
-                       <div class="w-8 h-8 rounded-full bg-[#db2777] flex items-center justify-center text-white font-black shrink-0 border-2 border-white text-sm shadow-sm">⭐</div>
-                       <p class="text-[13px] font-medium text-gray-700 leading-snug"><strong class="text-highlight">Hiper cremoso</strong> (derrete devagar, textura de sorvete profissional).</p>
-                   </div>
-                   <div class="flex items-start gap-3">
-                       <div class="w-8 h-8 rounded-full bg-[#db2777] flex items-center justify-center text-white font-black shrink-0 border-2 border-white text-sm shadow-sm">📱</div>
-                       <p class="text-[13px] font-medium text-gray-700 leading-snug">Venda no Delivery. Você fará sorvetes com <strong class="text-highlight">cara de marca famosa</strong> para vender todo dia.</p>
-                   </div>
-               </div>
-           </div>
-
-           <div class="w-full text-center z-30 mt-8 flex flex-col items-center shrink-0">
-               <button onclick="showFinalPage()" class="animate-pulse-cta w-full py-5 px-6 btn-green text-[1.1rem] font-black rounded-xl uppercase tracking-wide shadow-xl">QUERO APRENDER O MÉTODO CASEIRO</button>
-           </div>
-       </div>
-
-       <div id="finalPage" class="hidden w-full flex-col items-center pt-4 pb-8 animate-fade text-center">
-           <div class="glass-card p-6 text-center w-full z-30 relative shrink-0 mb-6 border-b-4 border-b-[#db2777]">
-               <h2 class="text-[2.5rem] font-black leading-tight text-gray-900 italic">A <span class="text-highlight">Matemática</span> do Lucro</h2>
-           </div>
+           <h1 class="text-[26px] md:text-[30px] font-black leading-[1.15] tracking-tight mb-4 text-center text-gray-900">
+               Pare de perder dinheiro. <span class="text-brand">Aprenda a fazer sorvetes que vendem sozinhos</span> e fature até R$300/dia.
+           </h1>
            
-           <div class="w-full text-center z-30 mt-4 flex flex-col items-center shrink-0">
-               <p class="text-[15px] font-bold mb-6 leading-relaxed text-gray-700 px-4 text-center">
-                   O custo para produzir o Sorvete Artesanal é <strong class="text-highlight">super baixo</strong>. Veja quanto você coloca no bolso:
-               </p>
+           <p class="text-[14px] text-gray-600 font-medium mb-6 text-center px-2">
+               O método caseiro com lucro acima de 300% para você aproveitar o calor sem precisar de experiência ou máquinas caras.
+           </p>
+           
+           <!-- ÂNCORA DE PREÇO -->
+           <div class="mb-4 text-center">
+               <p class="text-[11px] text-gray-500 font-bold uppercase tracking-widest mb-1">Por Apenas...</p>
+               <p class="text-brand text-[2.5rem] font-black leading-none">R$ 14,90</p>
+               <p class="text-[11px] text-gray-500 mt-1">pagamento único com acesso imediato</p>
+           </div>
 
-               <div class="w-full bg-white/90 backdrop-blur-md rounded-3xl p-6 border border-white mb-8 shadow-xl relative">
-                   <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white font-black px-5 py-1.5 rounded-full text-[11px] uppercase tracking-widest shadow-md">LUCRO GARANTIDO</div>
-                   
-                   <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-3 mt-2">
-                       <span class="text-gray-600 font-medium text-[15px]">Custo Médio (1 Litro):</span>
-                       <span class="font-bold text-gray-900 text-[16px]">R$ 8,00</span>
-                   </div>
-                   <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-3">
-                       <span class="text-gray-600 font-medium text-[15px]">Preço de Venda:</span>
-                       <span class="font-bold text-gray-900 text-[16px]">R$ 35,00</span>
-                   </div>
-                   <div class="flex justify-between items-center pt-2">
-                       <span class="font-black text-gray-900 text-[18px] uppercase italic">Lucro Limpo:</span>
-                       <span class="font-black text-highlight text-[24px]">R$ 27,00 <span class="text-[12px] text-gray-500 italic lowercase">/litro</span></span>
-                   </div>
-               </div>
+           <button onclick="document.getElementById('checkoutSection').scrollIntoView({behavior: 'smooth'})" class="animate-pulse-btn w-full py-4 px-6 btn-primary font-black text-[1.1rem] rounded-xl uppercase tracking-wider mb-8">
+               QUERO COMEÇAR A LUCRAR
+           </button>
 
-               <div class="w-full bg-gradient-to-r from-[#10b981] to-[#059669] rounded-[2rem] p-6 mb-8 shadow-xl transform rotate-1 border-2 border-green-300">
-                   <p class="text-white/90 font-black text-[13px] uppercase tracking-widest mb-3">Vendendo APENAS 10 potes por dia:</p>
-                   <p class="text-white font-black text-[3rem] leading-none drop-shadow-md mb-1">R$ 8.100<span class="text-2xl text-white/80">,00</span></p>
-                   <p class="text-white font-black text-[16px] italic">de lucro livre no mês!</p>
-               </div>
-
-               <p class="text-[14px] text-gray-700 font-bold mb-8 leading-relaxed px-5 italic text-center">
-                   Isso significa que você pode começar com <span class="text-highlight font-black underline">pouco dinheiro</span> e ainda assim ter uma lucratividade de mais de 300% no calor!
-               </p>
-
-               <button onclick="showTestimonials()" class="animate-pulse-cta w-full py-5 px-6 btn-green text-[1.1rem] font-black rounded-xl uppercase tracking-wide shadow-xl">CONTINUAR</button>
+           <!-- IMAGEM HERO COM GLOW SUAVE -->
+           <div class="relative w-full flex justify-center items-center glow-image rounded-2xl bg-white border border-gray-100 p-1">
+               <img src="imagem1.webp" fetchpriority="high" decoding="async" alt="Sorvete Artesanal" class="w-full h-auto object-cover rounded-xl">
            </div>
        </div>
 
-       <div id="testimonialsPage" class="hidden w-full flex-col items-center pt-4 pb-8 animate-fade text-center">
-           <div class="glass-card p-6 text-center w-full shrink-0 mb-8"><h2 class="text-2xl font-black mb-1 text-gray-900 uppercase italic tracking-tighter text-center">O que estão falando na Comunidade:</h2></div>
-         
-           <div class="w-full space-y-4 mt-8 mb-8 z-20 text-left px-2">
+       <!-- O SEGREDO DO MÉTODO (CARDS VERTICAIS) -->
+       <div class="w-full flex flex-col items-center px-5 pt-8 pb-8 fade-up text-center bg-gray-50 border-t border-gray-100">
+           <p class="text-brand text-[11px] font-black uppercase tracking-widest mb-2">O MÉTODO</p>
+           <h2 class="text-2xl font-black leading-tight text-gray-900 mb-8">
+               O Segredo da <span class="text-brand">Massa Perfeita</span><br>direto no liquidificador.
+           </h2>
+
+           <div class="w-full card-light p-5 flex flex-col gap-4 text-left">
+               <!-- Check 1 -->
+               <div class="flex items-start gap-4 pb-4 border-b border-gray-100">
+                   <div class="w-6 h-6 rounded-full bg-pink-50 border border-pink-200 flex items-center justify-center shrink-0 mt-0.5">
+                       <span class="text-brand text-xs font-black">✔</span>
+                   </div>
+                   <div>
+                       <h4 class="font-bold text-gray-900 text-[15px] mb-1">Sem Máquina Cara</h4>
+                       <p class="text-[13px] text-gray-600 leading-relaxed">Faça sorvetes hiper cremosos e profissionais usando apenas o que você já tem na cozinha.</p>
+                   </div>
+               </div>
                
-               <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md border border-gray-100 flex gap-3 transform -rotate-1 text-left relative">
-                   <div class="w-10 h-10 rounded-full bg-[#d81b60] text-white flex items-center justify-center font-black flex-shrink-0 text-sm shadow-sm">P</div>
-                   <div class="flex-1 pb-3">
-                       <h4 class="font-black text-[13px] text-[#3b5998]">Patrícia Gomes</h4>
-                       <p class="text-[12px] leading-snug text-gray-700 mt-1">Gente, a saída aqui no bairro tá surreal! 😱 Fiz 20 potes de Ninho com Nutella de manhã e já acabou tudo antes do almoço. O lucro é real mesmo!</p>
-                       <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-500 font-bold">
-                           <span class="cursor-pointer hover:underline">Curtir</span>
-                           <span class="cursor-pointer hover:underline">Responder</span>
-                           <span class="font-normal text-gray-400">2 h</span>
-                       </div>
-                       <div class="absolute bottom-2 right-3 flex items-center bg-white rounded-full shadow-sm border border-gray-200 px-1.5 py-0.5">
-                           <span class="text-[11px] z-10">👍</span>
-                           <span class="text-[11px] -ml-1 z-0">❤️</span>
-                           <span class="text-[10px] ml-1 text-gray-600 font-bold">24</span>
-                       </div>
+               <!-- Check 2 -->
+               <div class="flex items-start gap-4 pb-4 border-b border-gray-100">
+                   <div class="w-6 h-6 rounded-full bg-pink-50 border border-pink-200 flex items-center justify-center shrink-0 mt-0.5">
+                       <span class="text-brand text-xs font-black">✔</span>
+                   </div>
+                   <div>
+                       <h4 class="font-bold text-gray-900 text-[15px] mb-1">A Base Que Não Cristaliza</h4>
+                       <p class="text-[13px] text-gray-600 leading-relaxed">Aprenda o ponto exato da massa que rende muito, não cria cristais de gelo e derrete devagar.</p>
                    </div>
                </div>
 
-               <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md border border-gray-100 flex gap-3 transform rotate-1 text-left relative">
-                   <div class="w-10 h-10 rounded-full bg-[#3b82f6] text-white flex items-center justify-center font-black flex-shrink-0 text-sm shadow-sm">A</div>
-                   <div class="flex-1 pb-3">
-                       <h4 class="font-black text-[13px] text-[#3b5998]">Ana Clara</h4>
-                       <p class="text-[12px] leading-snug text-gray-700 mt-1">Meu marido não acreditou que fiz no liquidificador kkkk 😂 Ficou muito cremoso, igual de sorveteria cara. A receita da massa base é muito econômica, amei!</p>
-                       <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-500 font-bold">
-                           <span class="cursor-pointer hover:underline">Curtir</span>
-                           <span class="cursor-pointer hover:underline">Responder</span>
-                           <span class="font-normal text-gray-400">5 h</span>
-                       </div>
-                       <div class="absolute bottom-2 right-3 flex items-center bg-white rounded-full shadow-sm border border-gray-200 px-1.5 py-0.5">
-                           <span class="text-[11px] z-10">❤️</span>
-                           <span class="text-[10px] ml-1 text-gray-600 font-bold">12</span>
-                       </div>
+               <!-- Check 3 -->
+               <div class="flex items-start gap-4 pb-4 border-b border-gray-100">
+                   <div class="w-6 h-6 rounded-full bg-pink-50 border border-pink-200 flex items-center justify-center shrink-0 mt-0.5">
+                       <span class="text-brand text-xs font-black">✔</span>
+                   </div>
+                   <div>
+                       <h4 class="font-bold text-gray-900 text-[15px] mb-1">Custo Baixo, Margem Alta</h4>
+                       <p class="text-[13px] text-gray-600 leading-relaxed">Gaste menos de R$ 8,00 para produzir um litro e venda com preço de sorveteria premium (R$ 35+).</p>
                    </div>
                </div>
 
-               <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md border border-gray-100 flex gap-3 transform -rotate-1 text-left relative">
-                   <div class="w-10 h-10 rounded-full bg-[#10b981] text-white flex items-center justify-center font-black flex-shrink-0 text-sm shadow-sm">R</div>
-                   <div class="flex-1 pb-3">
-                       <h4 class="font-black text-[13px] text-[#3b5998]">Roberta Silva</h4>
-                       <p class="text-[12px] leading-snug text-gray-700 mt-1">Paguei o curso na primeira semana só vendendo pros vizinhos no WhatsApp. A dica do delivery salvou demais, agora vendo sem sair do portão!</p>
-                       <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-500 font-bold">
-                           <span class="cursor-pointer hover:underline">Curtir</span>
-                           <span class="cursor-pointer hover:underline">Responder</span>
-                           <span class="font-normal text-gray-400">8 h</span>
-                       </div>
-                       <div class="absolute bottom-2 right-3 flex items-center bg-white rounded-full shadow-sm border border-gray-200 px-1.5 py-0.5">
-                           <span class="text-[11px] z-10">😆</span>
-                           <span class="text-[11px] -ml-1 z-0">👍</span>
-                           <span class="text-[10px] ml-1 text-gray-600 font-bold">31</span>
-                       </div>
+               <!-- Check 4 -->
+               <div class="flex items-start gap-4">
+                   <div class="w-6 h-6 rounded-full bg-pink-50 border border-pink-200 flex items-center justify-center shrink-0 mt-0.5">
+                       <span class="text-brand text-xs font-black">✔</span>
+                   </div>
+                   <div>
+                       <h4 class="font-bold text-gray-900 text-[15px] mb-1">+50 Sabores Gourmet</h4>
+                       <p class="text-[13px] text-gray-600 leading-relaxed">De Ninho com Nutella a Pudim. Um cardápio completo para você vender no iFood ou WhatsApp todo dia.</p>
                    </div>
                </div>
-
-               <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md border border-gray-100 flex gap-3 transform rotate-1 text-left relative">
-                   <div class="w-10 h-10 rounded-full bg-[#f59e0b] text-white flex items-center justify-center font-black flex-shrink-0 text-sm shadow-sm">M</div>
-                   <div class="flex-1 pb-3">
-                       <h4 class="font-black text-[13px] text-[#3b5998]">Maria Helena</h4>
-                       <p class="text-[12px] leading-snug text-gray-700 mt-1">Eu tinha medo de ficar com cristais de gelo, mas segui o passo a passo da apostila e ficou perfeito. Obrigada Mari! 🙏</p>
-                       <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-500 font-bold">
-                           <span class="cursor-pointer hover:underline">Curtir</span>
-                           <span class="cursor-pointer hover:underline">Responder</span>
-                           <span class="font-normal text-gray-400">1 d</span>
-                       </div>
-                       <div class="absolute bottom-2 right-3 flex items-center bg-white rounded-full shadow-sm border border-gray-200 px-1.5 py-0.5">
-                           <span class="text-[11px] z-10">❤️</span>
-                           <span class="text-[11px] -ml-1 z-0">🥰</span>
-                           <span class="text-[10px] ml-1 text-gray-600 font-bold">8</span>
-                       </div>
-                   </div>
-               </div>
-
-               <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md border border-gray-100 flex gap-3 transform -rotate-1 text-left relative">
-                   <div class="w-10 h-10 rounded-full bg-[#8b5cf6] text-white flex items-center justify-center font-black flex-shrink-0 text-sm shadow-sm">F</div>
-                   <div class="flex-1 pb-3">
-                       <h4 class="font-black text-[13px] text-[#3b5998]">Fernanda Souza</h4>
-                       <p class="text-[12px] leading-snug text-gray-700 mt-1">Mari sempre tirando dúvidas e o conteúdo é perfeito! Minhas vendas bombam com os sabores e está me fazendo mudar de vida!</p>
-                       <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-500 font-bold">
-                           <span class="cursor-pointer hover:underline">Curtir</span>
-                           <span class="cursor-pointer hover:underline">Responder</span>
-                           <span class="font-normal text-gray-400">1 d</span>
-                       </div>
-                       <div class="absolute bottom-2 right-3 flex items-center bg-white rounded-full shadow-sm border border-gray-200 px-1.5 py-0.5">
-                           <span class="text-[11px] z-10">👍</span>
-                           <span class="text-[11px] -ml-1 z-0">😲</span>
-                           <span class="text-[10px] ml-1 text-gray-600 font-bold">34</span>
-                       </div>
-                   </div>
-               </div>
-
-           </div>
-           <button onclick="showLoadingPage()" class="w-full py-5 px-6 btn-green text-[1.1rem] font-black rounded-xl uppercase tracking-wide shadow-xl">QUERO TER OS MESMOS RESULTADOS</button>
-       </div>
-
-       <div id="loadingPage" class="hidden w-full flex-col items-center justify-center min-h-[85dvh] animate-fade">
-           <div class="glass-card p-10 text-center w-full border-2 border-white">
-               <div class="w-20 h-20 mx-auto mb-6 bg-white/80 rounded-full flex items-center justify-center border border-gray-200 shadow-md"><span class="text-4xl animate-pulse">🍨</span></div>
-               <h2 class="text-2xl font-black mb-8 text-gray-900 text-center leading-tight">Personalizando seu Plano...</h2>
-               <div id="progressBarContainer" class="mb-8 border border-gray-200 shadow-inner"><div id="progressBarFill"></div></div>
-               <div id="loadingItems" class="text-left space-y-4 text-[13px] text-gray-700 font-medium italic text-left"></div>
            </div>
        </div>
 
-       <div id="finalCheckoutPage" class="hidden w-full flex-col animate-fade pb-10">
-           <div class="bg-white rounded-[2rem] p-6 text-center w-full mb-6 shadow-sm border border-gray-100 text-center">
-               <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Seu plano está pronto!<br><span class="text-highlight uppercase text-sm tracking-widest">Leia com ATENÇÃO</span></h2>
-               <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto my-4 shadow-md border-2 border-white">
-                   <span class="text-white text-2xl font-black">✓</span>
-               </div>
-               <p class="text-[14px] text-gray-700 font-medium leading-relaxed text-center px-2 italic uppercase tracking-tighter">Parabéns! Você está qualificada para a turma de verão <strong class="text-highlight italic uppercase">Sorveteria em Casa!</strong></p>
+       <!-- SHOWCASE / VITRINE (GRID 2x2) -->
+       <div class="w-full flex flex-col items-center px-5 pt-8 pb-10 fade-up text-center">
+           <h2 class="text-[18px] md:text-[20px] font-black text-gray-900 uppercase tracking-tighter mb-0.5">
+               VOCÊ VAI APRENDER A FAZER
+           </h2>
+           <h3 class="text-[22px] md:text-[24px] font-black text-brand italic uppercase tracking-tighter mb-6">
+               ESSAS OBRAS DE ARTE:
+           </h3>
+           
+           <!-- Grid 2x2 -->
+           <div class="grid grid-cols-2 gap-3 w-full">
+               <img src="grid1.webp" loading="lazy" class="w-full aspect-square object-cover rounded-2xl shadow-sm border border-gray-100">
+               <img src="grid2.webp" loading="lazy" class="w-full aspect-square object-cover rounded-2xl shadow-sm border border-gray-100">
+               <img src="grid3.webp" loading="lazy" class="w-full aspect-square object-cover rounded-2xl shadow-sm border border-gray-100">
+               <img src="grid4.webp" loading="lazy" class="w-full aspect-square object-cover rounded-2xl shadow-sm border border-gray-100">
            </div>
+       </div>
 
-           <div class="bg-white rounded-[2rem] p-6 mb-6 shadow-xl border border-gray-100 text-gray-900 text-left relative overflow-hidden">
-               <div class="absolute top-0 right-0 bg-yellow-400 text-gray-900 text-[10px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest">Acesso Imediato</div>
+       <!-- O QUE VAI RECEBER (ENTREGÁVEIS + EMPILHAMENTO DE BÔNUS) -->
+       <div class="w-full flex flex-col px-5 pt-8 pb-10 fade-up bg-gray-50 border-t border-gray-100">
+           
+           <!-- PRODUTO PRINCIPAL -->
+           <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8 relative mt-2 mb-10">
+               <div class="absolute top-0 right-0 bg-[#fbbf24] text-gray-900 font-black px-4 py-1.5 rounded-bl-xl text-[10px] uppercase tracking-widest">ACESSO IMEDIATO</div>
                
-               <h3 class="text-[17px] font-black mb-5 leading-tight text-center">Tudo que você vai receber no<br>Método <span class="text-highlight">Sorveteria em Casa:</span></h3>
+               <h3 class="text-[18px] md:text-[20px] font-black text-center text-gray-900 mb-6 leading-tight mt-2">
+                   Tudo que você vai receber no<br>Método <span class="text-brand">Sorveteria em Casa:</span>
+               </h3>
                
-               <ul class="space-y-3 text-[13px] font-bold text-gray-700">
-                   <li class="flex gap-3 items-start"><span class="text-green-600 text-lg leading-none">✓</span> <span>Treinamento Completo com Aulas Gravadas</span></li>
-                   <li class="flex gap-3 items-start"><span class="text-green-600 text-lg leading-none">✓</span> <span>Passo a passo para vender seus primeiros potes em 24h</span></li>
-                   <li class="flex gap-3 items-start"><span class="text-green-600 text-lg leading-none">✓</span> <span>Técnica da <strong class="text-highlight">Massa Base</strong> que rende muito</span></li>
-                   <li class="flex gap-3 items-start"><span class="text-green-600 text-lg leading-none">✓</span> <span>Mais de <strong class="text-highlight">50 Sabores Gourmet</strong></span></li>
-                   <li class="flex gap-3 items-start"><span class="text-green-600 text-lg leading-none">✓</span> <span>Ferramenta secreta para vender todo dia no WhatsApp</span></li>
-                   <li class="flex gap-3 items-start"><span class="text-green-600 text-lg leading-none">✓</span> <span>Calculadora para precificar seus sorvetes</span></li>
-                   <li class="flex gap-3 items-start"><span class="text-green-600 text-lg leading-none">✓</span> <span>Acesso vitalício ao material</span></li>
-                   <li class="flex gap-3 items-start"><span class="text-green-600 text-lg leading-none">✓</span> <span>Acesso ao grupo do WhatsApp para dúvidas</span></li>
-                   <li class="flex gap-3 items-start"><span class="text-green-600 text-lg leading-none">✓</span> <span>Aplicativo para facilitar nas aulas</span></li>
-                   <li class="flex gap-3 items-start"><span class="text-green-600 text-lg leading-none">✓</span> <span>Certificado Oficial de Especialista em Gelados</span></li>
+               <ul class="space-y-4 text-[13px] md:text-[14px] font-bold text-gray-700">
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Treinamento Completo com Aulas Gravadas</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Passo a passo para vender seus primeiros potes em 24h</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Técnica da <strong class="text-brand">Massa Base</strong> que rende muito</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Mais de <strong class="text-brand">50 Sabores Gourmet</strong></span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Ferramenta secreta para vender todo dia no WhatsApp</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Calculadora para precificar seus sorvetes</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Acesso vitalício ao material</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Acesso ao grupo do WhatsApp para dúvidas</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Aplicativo para facilitar nas aulas</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Certificado Oficial de Especialista em Gelados</span></li>
                </ul>
                
                <div class="mt-6 pt-5 border-t border-gray-100 text-center">
-                   <p class="text-[13px] font-black text-gray-800 uppercase tracking-tighter italic">Transforme seu freezer em uma<br><span class="text-green-600 text-[16px]">Fábrica de Dinheiro hoje mesmo.</span></p>
+                   <p class="text-[13px] md:text-[14px] font-black text-gray-900 uppercase italic tracking-tighter">TRANSFORME SEU FREEZER EM UMA<br><span class="text-[#10b981] text-[15px] md:text-[16px]">FÁBRICA DE DINHEIRO HOJE MESMO.</span></p>
                </div>
            </div>
 
-           <div class="w-full mb-10 z-20">
-               <h3 class="text-gray-900 font-black text-center text-[18px] mb-5 uppercase tracking-tighter italic">
-                   Você vai aprender a fazer <br><span class="text-highlight text-[22px]">essas obras de arte:</span>
+           <!-- EMPILHAMENTO DE BÔNUS (VALUE STACKING) -->
+           <div class="w-full text-center mb-4">
+               <span class="inline-block bg-red-100 text-red-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3">APENAS HOJE</span>
+               <h3 class="text-xl md:text-2xl font-black text-gray-900 leading-tight">
+                   E não para por aí... Levando hoje você desbloqueia <span class="text-brand">7 Bônus Premium:</span>
                </h3>
-               <div class="grid grid-cols-2 gap-3">
-                   <img src="grid1.webp" alt="Sorvete 1" loading="lazy" decoding="async" class="scroll-fade w-full h-44 object-cover rounded-2xl shadow-sm border border-gray-200" style="transition-delay: 100ms;">
-                   <img src="grid2.webp" alt="Sorvete 2" loading="lazy" decoding="async" class="scroll-fade w-full h-44 object-cover rounded-2xl shadow-sm border border-gray-200" style="transition-delay: 200ms;">
-                   <img src="grid3.webp" alt="Sorvete 3" loading="lazy" decoding="async" class="scroll-fade w-full h-44 object-cover rounded-2xl shadow-sm border border-gray-200" style="transition-delay: 300ms;">
-                   <img src="grid4.webp" alt="Sorvete 4" loading="lazy" decoding="async" class="scroll-fade w-full h-44 object-cover rounded-2xl shadow-sm border border-gray-200" style="transition-delay: 400ms;">
-               </div>
            </div>
 
-           <div class="w-full mb-12 z-20">
-               <h3 class="text-gray-900 font-black text-center text-[20px] mb-2 uppercase tracking-tighter italic">
-                   E não para por aí...
-               </h3>
-               <p class="text-[14px] text-gray-700 font-medium text-center mb-6 px-3 leading-relaxed">
-                   Garantindo sua vaga <strong class="text-highlight">hoje</strong>, vou liberar <span class="font-black text-green-600">3 Bônus Gratuitos</span> 100% de graça (Só na versão completa):
-               </p>
-
-               <div class="space-y-5 text-left px-1">
-                   <div class="bg-white rounded-[1.25rem] p-6 shadow-sm border border-gray-200 relative">
-                       <div class="inline-block bg-gray-900 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3 shadow-sm">Bônus #01</div>
-                       <h4 class="font-black text-[16px] text-gray-900 mb-2 leading-tight">Geladinho Gourmet</h4>
-                       <p class="text-[13px] text-gray-600 leading-relaxed mb-5">Aprenda a fazer os famosos "dim-dims" ou "sacolés" gourmet para aumentar ainda mais o seu leque de produtos baratos e lucrativos.</p>
-                       <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                           <span class="text-[11px] font-bold text-gray-400 line-through">De R$ 67,00 por</span>
-                           <span class="text-[15px] font-black text-green-600 uppercase tracking-wide">Grátis</span>
-                       </div>
-                   </div>
-
-                   <div class="bg-white rounded-[1.25rem] p-6 shadow-sm border border-gray-200 relative">
-                       <div class="inline-block bg-gray-900 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3 shadow-sm">Bônus #02</div>
-                       <h4 class="font-black text-[16px] text-gray-900 mb-2 leading-tight">Paletas Mexicanas</h4>
-                       <p class="text-[13px] text-gray-600 leading-relaxed mb-5">O passo a passo para criar aquelas paletas super recheadas que vendem sozinhas e têm altíssimo valor agregado.</p>
-                       <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                           <span class="text-[11px] font-bold text-gray-400 line-through">De R$ 47,00 por</span>
-                           <span class="text-[15px] font-black text-green-600 uppercase tracking-wide">Grátis</span>
-                       </div>
-                   </div>
-
-                   <div class="bg-white rounded-[1.25rem] p-6 shadow-sm border border-gray-200 relative">
-                       <div class="inline-block bg-gray-900 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3 shadow-sm">Bônus #03</div>
-                       <h4 class="font-black text-[16px] text-gray-900 mb-2 leading-tight">Caldas e Coberturas</h4>
-                       <p class="text-[13px] text-gray-600 leading-relaxed mb-5">Eleve o nível do seu sorvete com caldas artesanais de chocolate, morango, caramelo e muito mais.</p>
-                       <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                           <span class="text-[11px] font-bold text-gray-400 line-through">De R$ 39,00 por</span>
-                           <span class="text-[15px] font-black text-green-600 uppercase tracking-wide">Grátis</span>
-                       </div>
-                   </div>
+           <!-- GRID DE BÔNUS (7 ITENS) -->
+           <div class="grid grid-cols-1 gap-3 w-full mt-4">
+               
+               <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
+                   <div class="absolute top-3 left-4 bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BÔNUS #1</div>
+                   <div class="absolute top-3 right-4 text-[11px] text-gray-400 line-through font-bold">R$ 97</div>
+                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Calculadora Mágica de Lucros</h4>
+                   <p class="text-[12px] text-gray-600 leading-relaxed">Calcule custos, mão de obra e veja o preço sugerido automaticamente. Margem garantida de 200% a 300%!</p>
                </div>
 
-               <img src="imagem2.webp" alt="Oferta Especial" loading="lazy" decoding="async" class="scroll-fade w-full h-auto object-cover rounded-[1.25rem] shadow-sm border border-gray-200 mt-6">
+               <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
+                   <div class="absolute top-3 left-4 bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BÔNUS #2</div>
+                   <div class="absolute top-3 right-4 text-[11px] text-gray-400 line-through font-bold">R$ 67</div>
+                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Kit Utensílios & Marcas</h4>
+                   <p class="text-[12px] text-gray-600 leading-relaxed">A lista definitiva de ingredientes secretos e marcas que barateiam seu custo sem perder a qualidade premium.</p>
+               </div>
+
+               <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
+                   <div class="absolute top-3 left-4 bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BÔNUS #3</div>
+                   <div class="absolute top-3 right-4 text-[11px] text-gray-400 line-through font-bold">R$ 67</div>
+                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Geladinho Gourmet de Sucesso</h4>
+                   <p class="text-[12px] text-gray-600 leading-relaxed">Amplie seu cardápio! Aprenda a fazer os "dim-dims" ou "sacolés" que são febre e vendem igual água.</p>
+               </div>
+
+               <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
+                   <div class="absolute top-3 left-4 bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BÔNUS #4</div>
+                   <div class="absolute top-3 right-4 text-[11px] text-gray-400 line-through font-bold">R$ 97</div>
+                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Copos da Felicidade Gelados</h4>
+                   <p class="text-[12px] text-gray-600 leading-relaxed">Use a massa do seu sorvete para montar taças e copos altamente lucrativos que podem ser vendidos a R$ 25/unidade.</p>
+               </div>
+
+               <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
+                   <div class="absolute top-3 left-4 bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BÔNUS #5</div>
+                   <div class="absolute top-3 right-4 text-[11px] text-gray-400 line-through font-bold">R$ 97</div>
+                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Máquina de Vendas no WhatsApp</h4>
+                   <p class="text-[12px] text-gray-600 leading-relaxed">Copie e cole meus roteiros de vendas para fechar encomendas com vizinhos, grupos do bairro e eventos.</p>
+               </div>
+
+               <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
+                   <div class="absolute top-3 left-4 bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BÔNUS #6</div>
+                   <div class="absolute top-3 right-4 text-[11px] text-gray-400 line-through font-bold">R$ 67</div>
+                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Delivery Sem Derreter</h4>
+                   <p class="text-[12px] text-gray-600 leading-relaxed">Tudo que você precisa saber para embalar e despachar seus sorvetes via iFood ou motoboy chegando intactos.</p>
+               </div>
+
+               <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
+                   <div class="absolute top-3 left-4 bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BÔNUS #7</div>
+                   <div class="absolute top-3 right-4 text-[11px] text-gray-400 line-through font-bold">R$ 39</div>
+                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Caldas e Coberturas Especiais</h4>
+                   <p class="text-[12px] text-gray-600 leading-relaxed">Eleve o nível do seu produto com caldas caseiras de caramelo salgado, chocolate trufado e morango fresco.</p>
+               </div>
+
+           </div>
+           
+           <button onclick="document.getElementById('checkoutSection').scrollIntoView({behavior: 'smooth'})" class="w-full py-4 px-6 btn-primary font-black text-[1.1rem] rounded-xl uppercase tracking-wider mt-8 shadow-[0_8px_25px_-5px_rgba(16,185,129,0.5)]">
+               QUERO GARANTIR TODOS OS BÔNUS
+           </button>
+       </div>
+
+       <!-- PROVA SOCIAL / DEPOIMENTOS -->
+       <div class="w-full flex flex-col items-center px-5 pt-8 pb-10 fade-up text-center border-t border-gray-100">
+           <h2 class="text-2xl font-black leading-tight text-gray-900 mb-6">
+               Quem testou, <span class="text-brand">Aprovou!</span>
+           </h2>
+           
+           <div class="w-full space-y-4 text-left">
+               <div class="card-light p-4">
+                   <div class="flex items-center gap-3 mb-2">
+                       <div class="w-8 h-8 rounded-full bg-[#db2777] text-white flex items-center justify-center font-bold text-sm shadow-sm">P</div>
+                       <p class="font-bold text-[13px] text-gray-900">Patrícia Gomes</p>
+                   </div>
+                   <p class="text-[13px] text-gray-600 italic">"Gente, a saída aqui no bairro tá surreal! Fiz 20 potes de Ninho com Nutella de manhã e já acabou tudo. O lucro é real!"</p>
+               </div>
+
+               <div class="card-light p-4">
+                   <div class="flex items-center gap-3 mb-2">
+                       <div class="w-8 h-8 rounded-full bg-[#10b981] text-white flex items-center justify-center font-bold text-sm shadow-sm">A</div>
+                       <p class="font-bold text-[13px] text-gray-900">Ana Clara</p>
+                   </div>
+                   <p class="text-[13px] text-gray-600 italic">"Meu marido não acreditou que fiz no liquidificador kkkk. A receita da massa base é muito econômica, amei!"</p>
+               </div>
+               
+               <div class="card-light p-4">
+                   <div class="flex items-center gap-3 mb-2">
+                       <div class="w-8 h-8 rounded-full bg-[#3b82f6] text-white flex items-center justify-center font-bold text-sm shadow-sm">R</div>
+                       <p class="font-bold text-[13px] text-gray-900">Roberta Silva</p>
+                   </div>
+                   <p class="text-[13px] text-gray-600 italic">"Paguei o curso na primeira semana só vendendo no WhatsApp. A dica do delivery salvou demais!"</p>
+               </div>
+           </div>
+       </div>
+
+       <!-- OFERTA FINAL (CHECKOUT) -->
+       <div id="checkoutSection" class="w-full flex flex-col px-5 pt-10 pb-12 fade-up border-t border-gray-200 bg-white">
+           <p class="text-brand text-[11px] font-black uppercase tracking-widest mb-2 text-center">DECISÃO FINAL</p>
+           <h2 class="text-2xl font-black leading-tight text-gray-900 mb-8 text-center">
+               Escolha seu plano e <br>comece a lucrar hoje.
+           </h2>
+
+           <!-- PLANO VIP (DESTAQUE) -->
+           <div class="bg-white border-2 border-[#10b981] rounded-2xl p-6 mb-6 relative shadow-2xl">
+               <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#10b981] text-white font-black px-4 py-1 rounded-full text-[10px] uppercase tracking-widest">MAIS VENDIDO</div>
+               
+               <h4 class="text-[18px] font-black text-center mt-2 text-gray-900">Plano Completo (VIP)</h4>
+               <p class="text-[11px] text-gray-500 text-center mt-1">Vídeo Aulas + E-book + Ferramentas</p>
+               
+               <!-- IMAGEM DO PRODUTO (LIMPA E SEM CAIXA) -->
+               <div class="flex justify-center my-4">
+                   <img src="imagem1.webp" alt="Pacote VIP Sorveteria" class="h-28 w-auto transform hover:scale-105 transition-transform duration-300">
+               </div>
+               
+               <div class="space-y-3 my-5 font-medium text-[12px] text-gray-700">
+                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Vídeo Aulas Passo a Passo</span></p>
+                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Técnica da Massa Base e +50 Sabores</span></p>
+                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Calculadora Automática de Lucro</span></p>
+                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Os 8 Presentes Exclusivos Inclusos</span></p>
+                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Certificado Oficial</span></p>
+               </div>
+               
+               <div class="text-center mb-5 border-t border-gray-100 pt-4">
+                   <p class="text-[11px] text-gray-400 line-through font-bold mb-1">de R$ 197,00 por</p>
+                   <p class="text-[2.5rem] font-black text-gray-900 leading-none tracking-tighter">R$ 27,90</p>
+               </div>
+               
+               <a href="https://confeiteira-mari.pay.yampi.com.br/r/FRIA4GCN1E" class="block w-full py-4 btn-primary font-black rounded-xl text-center uppercase tracking-wider text-[1.1rem]">
+                   COMPRAR PLANO VIP
+               </a>
            </div>
 
-           <h3 class="text-gray-900 font-black text-center text-[18px] mb-6 uppercase tracking-wider italic text-center">ESCOLHA SEU PLANO E COMECE AGORA</h3>
-
-           <div class="bg-white border-[4px] border-[#10b981] rounded-[2rem] p-6 mb-6 relative shadow-xl text-gray-900 text-left transform hover:scale-[1.02] transition-transform duration-300">
-               <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#10b981] text-white font-black px-6 py-1.5 rounded-full text-[12px] uppercase shadow-md tracking-wider">MAIS VENDIDO</div>
+           <!-- PLANO BÁSICO -->
+           <div class="card-light p-6 mb-8 border border-gray-200">
+               <h4 class="text-[16px] font-black text-center text-gray-800">Apostila Digital (Básico)</h4>
+               <p class="text-[11px] text-gray-500 text-center mt-1">Apenas as receitas em texto</p>
                
-               <h4 class="text-[19px] font-black text-center mt-3 uppercase italic tracking-tighter text-gray-900">CURSO COMPLETO (VÍDEO + E-BOOK)</h4>
-               
-               <div class="space-y-3 my-6 font-bold text-gray-700 text-[13px] text-left px-1">
-                   <p class="flex items-start gap-2"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Vídeo Aulas Passo a Passo</span></p>
-                   <p class="flex items-start gap-2"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Técnica da Massa Base e +50 Sabores</span></p>
-                   <p class="flex items-start gap-2"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Calculadora Automática de Lucro</span></p>
-                   <p class="flex items-start gap-2"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Os 3 Bônus Exclusivos Inclusos</span></p>
-                   <p class="flex items-start gap-2"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>App Próprio e Grupo WhatsApp</span></p>
-                   <p class="flex items-start gap-2"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Certificado de Conclusão Incluso</span></p>
-               </div>
-               
-               <div class="text-center mb-6">
-                   <p class="text-[13px] text-gray-400 line-through font-bold mb-1">de R$ 197,00 por</p>
-                   <div class="flex items-center justify-center gap-1">
-                       <span class="text-3xl font-black text-gray-900 self-start mt-1">R$</span>
-                       <span class="text-[4rem] font-black text-gray-900 leading-none tracking-tighter">37<span class="text-4xl">,00</span></span>
-                   </div>
-                   <p id="countdown1" class="text-red-600 font-black text-[11px] mt-3 uppercase italic tracking-wider">Desconto válido por: 01:43</p>
-               </div>
-               
-               <a href="https://confeiteira-mari.pay.yampi.com.br/r/FRIA4GCN1E" class="animate-pulse-cta block w-full py-5 bg-[#10b981] text-white font-black rounded-2xl text-center uppercase tracking-wider shadow-lg text-[1.15rem] italic hover:bg-[#059669] transition-colors">QUERO O PACOTE COMPLETO</a>
-               
-               <div class="mt-5 flex flex-col items-center justify-center">
-                   <div class="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-                       <span>🔒 Compra 100% Segura - Acesso Vitalício</span>
-                   </div>
-                   <div class="flex items-center gap-3 text-2xl grayscale opacity-50">
-                       <span title="PIX">💠</span>
-                       <span title="Cartão de Crédito">💳</span>
-                       <span title="Boleto">📄</span>
-                   </div>
-               </div>
-           </div>
-
-           <div class="bg-white rounded-[2rem] p-6 mb-4 shadow-md border-2 border-gray-100 text-gray-900 text-left">
-               <h4 class="text-[16px] font-black text-center italic uppercase tracking-tighter text-gray-800">APOSTILA DIGITAL (E-BOOK)</h4>
-               
-               <div class="space-y-2.5 my-5 font-bold text-[12px] text-left px-1">
-                   <p class="flex items-start gap-2 text-gray-800"><span class="text-green-500 text-base leading-none">✔</span> <span>Apenas Receitas em Texto</span></p>
-                   <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-500 text-base leading-none">✗</span> <span>Vídeo Aulas e Aplicativo</span></p>
-                   <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-500 text-base leading-none">✗</span> <span>Todos os 3 Bônus Extras</span></p>
-                   <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-500 text-base leading-none">✗</span> <span>Suporte VIP e Grupo</span></p>
+               <div class="space-y-3 my-5 font-medium text-[12px] text-gray-500">
+                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Apenas Receitas em Texto</span></p>
+                   <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-400 font-bold text-sm">✗</span> <span>Vídeo Aulas Passo a Passo</span></p>
+                   <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-400 font-bold text-sm">✗</span> <span>Todos os 8 Presentes Extras</span></p>
+                   <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-400 font-bold text-sm">✗</span> <span>Certificado Oficial</span></p>
                </div>
                
                <div class="flex items-center justify-between gap-4 mt-4 border-t border-gray-100 pt-5">
-                   <span class="text-[28px] font-black text-gray-800 tracking-tighter">R$ 17,00</span>
-                   <button onclick="showUpsellPopup()" class="px-5 py-3 bg-gray-50 text-gray-500 font-black text-[11px] rounded-xl uppercase hover:bg-gray-100 transition-colors shadow-sm border border-gray-200 tracking-wider">COMPRAR BÁSICO</button>
+                   <span class="text-[24px] font-black text-gray-900 tracking-tighter">R$ 14,90</span>
+                   <!-- Dispara o Popup de Upsell -->
+                   <button onclick="showUpsellPopup()" class="px-4 py-3 bg-gray-50 text-gray-600 font-bold text-[11px] rounded-lg uppercase hover:bg-gray-100 transition-colors border border-gray-200 tracking-wider">COMPRAR BÁSICO</button>
                </div>
            </div>
 
-           <div class="animate-alert w-full p-4 rounded-2xl mb-8 bg-red-600 text-white text-center shadow-lg border-2 border-red-700 text-center">
-               <p class="text-[10px] font-black uppercase tracking-[0.2em] mb-1 text-center">⚠️ ATENÇÃO: Oferta Expirando</p>
-               <h3 class="text-2xl font-black tracking-tighter text-center" id="countdown2">03:00</h3>
-               <p class="text-[9px] font-bold opacity-90 mt-1 uppercase italic text-center">Esta é a última chance de levar o plano básico com desconto!</p>
+           <!-- GARANTIA -->
+           <div class="flex flex-col items-center justify-center text-center p-5 bg-green-50 border border-green-100 rounded-xl w-full">
+               <div class="text-green-500 text-3xl mb-2">🛡️</div>
+               <h4 class="font-black text-gray-900 text-[14px] mb-1">Garantia Incondicional de 7 Dias</h4>
+               <p class="text-[12px] text-gray-600 leading-snug">Se não gostar do conteúdo, devolvemos 100% do seu dinheiro. Sem burocracia, o seu risco é zero.</p>
            </div>
+       </div>
 
-           <div class="w-full text-left mb-10 z-20">
-               <h3 class="text-gray-900 font-black text-center text-[18px] mb-5 uppercase tracking-tighter italic">Dúvidas Frequentes:</h3>
-               <div class="space-y-3">
-                   <div class="bg-white border border-gray-100 shadow-sm p-4 rounded-2xl">
-                       <h4 class="font-black text-[13px] text-gray-900 mb-1">Como vou receber o material?</h4>
-                       <p class="text-[12px] font-medium text-gray-600 leading-snug">Imediatamente após o pagamento, você receberá um e-mail com seu login e senha para acessar a plataforma oficial e o nosso App.</p>
-                   </div>
-                   <div class="bg-white border border-gray-100 shadow-sm p-4 rounded-2xl">
-                       <h4 class="font-black text-[13px] text-gray-900 mb-1">Nunca fiz sorvete, vou conseguir?</h4>
-                       <p class="text-[12px] font-medium text-gray-600 leading-snug">Com certeza! O método da Mariana foi criado justamente para quem está começando do absoluto zero. Tudo passo a passo.</p>
-                   </div>
-                   <div class="bg-white border border-gray-100 shadow-sm p-4 rounded-2xl">
-                       <h4 class="font-black text-[13px] text-gray-900 mb-1">Posso pagar no PIX?</h4>
-                       <p class="text-[12px] font-medium text-gray-600 leading-snug">Sim! O pagamento via PIX é aprovado na hora e você já recebe o acesso no mesmo minuto no seu e-mail.</p>
-                   </div>
-               </div>
+       <!-- FAQ INTERATIVO -->
+       <div class="w-full flex flex-col px-5 pt-8 pb-10 fade-up bg-gray-50 border-t border-gray-200">
+           <h2 class="text-xl font-black leading-tight text-gray-900 mb-6 text-center">
+               Ainda tem <span class="text-brand">Dúvidas?</span>
+           </h2>
+
+           <div class="space-y-3 w-full">
+               <details class="group card-light p-4 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                   <summary class="flex justify-between items-center font-bold text-[13px] text-gray-900 list-none">
+                       <span>Como vou receber o material?</span>
+                       <span class="transition group-open:rotate-180 text-brand">▼</span>
+                   </summary>
+                   <p class="text-[12px] text-gray-600 mt-3 leading-snug border-t border-gray-100 pt-3">Imediatamente após o pagamento ser aprovado, você receberá um e-mail da plataforma com seu login e senha para acessar todas as aulas em vídeo e baixar as apostilas digitais.</p>
+               </details>
+
+               <details class="group card-light p-4 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                   <summary class="flex justify-between items-center font-bold text-[13px] text-gray-900 list-none">
+                       <span>Nunca fiz sorvete na vida, vou conseguir?</span>
+                       <span class="transition group-open:rotate-180 text-brand">▼</span>
+                   </summary>
+                   <p class="text-[12px] text-gray-600 mt-3 leading-snug border-t border-gray-100 pt-3">Com absoluta certeza! O nosso método foi criado passo a passo focado em iniciantes. Você só precisa de um liquidificador comum e os ingredientes que mostramos nas aulas.</p>
+               </details>
+
+               <details class="group card-light p-4 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                   <summary class="flex justify-between items-center font-bold text-[13px] text-gray-900 list-none">
+                       <span>Quais são as formas de pagamento?</span>
+                       <span class="transition group-open:rotate-180 text-brand">▼</span>
+                   </summary>
+                   <p class="text-[12px] text-gray-600 mt-3 leading-snug border-t border-gray-100 pt-3">Aceitamos PIX (liberação imediata do acesso), Cartão de Crédito (podendo parcelar em até 5x) e Boleto Bancário.</p>
+               </details>
+               
+               <details class="group card-light p-4 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                   <summary class="flex justify-between items-center font-bold text-[13px] text-gray-900 list-none">
+                       <span>Tem garantia? É seguro mesmo?</span>
+                       <span class="transition group-open:rotate-180 text-brand">▼</span>
+                   </summary>
+                   <p class="text-[12px] text-gray-600 mt-3 leading-snug border-t border-gray-100 pt-3">Sim! O seu pagamento é processado por uma das maiores plataformas do Brasil. Você tem 7 dias para testar tudo. Se não gostar, basta um e-mail que devolvemos 100% do seu dinheiro.</p>
+               </details>
            </div>
+       </div>
 
-           <div class="flex flex-col items-center justify-center mb-10 text-center">
-               <img src="http://cursou.site/wp-content/uploads/2025/04/selo-garantia-7-dias-300x300-1.webp" loading="lazy" decoding="async" class="w-40 mb-3 text-center" alt="Garantia de 7 Dias">
-               <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest text-center italic">Garantia incondicional de 7 dias. Seu risco é zero.</p>
-           </div>
-
-           <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-full py-5 btn-green font-black rounded-[2rem] uppercase tracking-wide shadow-xl mb-10 text-lg italic text-center">Quero lucrar neste verão!</button>
-
-           <div class="glass-card p-8 mb-10 text-center border border-white text-center">
-               <img src="http://cursou.site/wp-content/uploads/2025/10/CONFEITEIRAMARIAMR.webp" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-white shadow-md">
-               <h4 class="text-highlight font-serif-italic text-3xl mb-4 italic leading-none text-center">Mari Farias -</h4>
-               <p class="text-[14px] leading-relaxed font-bold text-gray-700 px-2 mb-6 italic text-center text-center">Criadora do Treinamento Sorveteria em Casa, especialista em confeitaria desde 2019.<br><br>Comecei vendendo geladinhos na porta de casa, mas logo percebi o potencial incrível que o sorvete de massa tem para gerar renda com criatividade e pouco investimento. ✨</p>
-               <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-full py-4 bg-white text-[#db2777] font-black rounded-2xl uppercase text-[12px] shadow-sm tracking-widest italic text-center border border-gray-200">Quero viver trabalhando de casa!</button>
-           </div>
-       </div> </div> <script>
-       const ALL_VIEWS = ['landingPage', 'quizPage', 'quizCursoPage', 'quizTempoPage', 'quizDoresPage', 'quizObjetivosPage', 'quizObjetivoFinalPage', 'finalOfferPage', 'finalPage', 'testimonialsPage', 'loadingPage', 'finalCheckoutPage'];
-      
-       function hideAllViews() {
-           ALL_VIEWS.forEach(id => {
-               const el = document.getElementById(id);
-               if(el) {
-                   el.classList.add('hidden');
-                   el.classList.remove('flex');
-               }
-           });
-       }
-
-       function showView(viewId) {
-           hideAllViews();
+       <!-- FINAL CTA & FOOTER (LIGHT MODE - CLEAN) -->
+       <div class="w-full flex flex-col items-center bg-white text-gray-900 pt-12 pb-8 px-6 border-t border-gray-200">
            
-           // Alterna o fundo da página dependendo da view
-           const mainBody = document.getElementById('mainBody');
-           if(viewId === 'landingPage') {
-               mainBody.classList.add('bg-white-solid');
-               mainBody.classList.remove('bg-pink-glass');
-           } else {
-               mainBody.classList.add('bg-pink-glass');
-               mainBody.classList.remove('bg-white-solid');
-           }
+           <!-- Tag / Badge -->
+           <div class="flex items-center gap-3 mb-6">
+               <div class="bg-[#ef4444] text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
+                   <span>🔥</span> ÚLTIMAS VAGAS COM DESCONTO
+               </div>
+           </div>
 
-           const view = document.getElementById(viewId);
-           if (view) {
-               view.classList.remove('hidden');
-               view.classList.add('flex');
-               window.scrollTo({ top: 0, behavior: 'smooth' });
-           }
-       }
-      
-       function showQuiz() { showView('quizPage'); }
-       function showQuestion2() { showView('quizCursoPage'); }
-       function showQuestion3() { showView('quizTempoPage'); }
-       function showQuestion4() { showView('quizDoresPage'); }
-       function showQuestion5() { showView('quizDoresPage'); } // Ajuste fluxo HTML1: Pergunta 5 (Dores) -> Pergunta 6 (Objetivos)
-       function showQuestion6() { showView('quizObjetivosPage'); }
-       function showFinalOffer() { showView('quizObjetivoFinalPage'); } // Redireciona pro proximo quiz
-       function showRealFinalOffer() { showView('finalOfferPage'); }
-       
-       // Override para manter a lógica exata de cliques:
-       document.querySelector('#quizDoresPage .w-full.space-y-3').innerHTML = `
-            <button onclick="showQuestion6()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">💸</span> Não sobra dinheiro para lazer</div><span class="text-highlight font-black text-xl">></span></button>
-            <button onclick="showQuestion6()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">😓</span> Contas apertadas e rotina chata</div><span class="text-highlight font-black text-xl">></span></button>
-            <button onclick="showQuestion6()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl">🚨</span> Preciso de um extra URGENTE!</div><span class="text-highlight font-black text-xl">></span></button>
-       `;
-       document.querySelector('#quizObjetivosPage .w-full.space-y-3').innerHTML = `
-            <button onclick="showFinalOffer()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">📈</span> Ter uma Renda Extra garantida</div><span class="text-highlight font-black text-xl">></span></button>
-            <button onclick="showFinalOffer()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">🎯</span> Dinheiro rápido no verão</div><span class="text-highlight font-black text-xl">></span></button>
-            <button onclick="showFinalOffer()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">🤠</span> Ter dinheiro para viajar/curtir</div><span class="text-highlight font-black text-xl">></span></button>
-       `;
-       document.querySelector('#quizObjetivoFinalPage .w-full.space-y-3').innerHTML = `
-            <button onclick="showRealFinalOffer()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">🔥</span> Aprender a vender MUITO neste calor</div><span class="text-highlight font-black text-xl">></span></button>
-            <button onclick="showRealFinalOffer()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">🥂</span> Ter uma fonte de renda extra segura</div><span class="text-highlight font-black text-xl">></span></button>
-            <button onclick="showRealFinalOffer()" class="quiz-btn w-full flex items-center justify-between p-5 rounded-2xl font-bold"><div class="flex items-center gap-3"><span class="text-2xl shrink-0">🎓</span> Apenas fazer para a família</div><span class="text-highlight font-black text-xl">></span></button>
-       `;
+           <!-- Headline -->
+           <h2 class="text-[28px] md:text-[32px] font-black text-center leading-[1.1] mb-5">
+               O preço de <span class="text-[#10b981]">R$ 14,90</span> é por tempo limitado!
+           </h2>
 
-       function showFinalPage() { showView('finalPage'); }
-       function showTestimonials() { showView('testimonialsPage'); }
+           <!-- Subheadline -->
+           <p class="text-[14px] md:text-[15px] text-gray-600 font-medium text-center mb-8 px-2 leading-relaxed">
+               Depois dessa promoção, o valor volta para <span class="line-through text-gray-400">R$ 197,00</span>. Garanta agora e comece a lucrar hoje mesmo.
+           </p>
 
+           <!-- Botão de Impulso (Puxa do btn-primary verde) -->
+           <button onclick="document.getElementById('checkoutSection').scrollIntoView({behavior: 'smooth'})" class="animate-pulse-btn w-full py-5 btn-primary font-black text-[1.1rem] rounded-xl uppercase tracking-wider mb-6">
+               🔥 Quero Garantir Minha Vaga!
+           </button>
+
+           <!-- Trust Badges -->
+           <div class="flex flex-col items-center gap-2 text-[11px] text-gray-500 mb-10 text-center font-medium">
+               <p class="flex items-center gap-1.5"><span class="text-[#10b981] text-sm">🛡️</span> Garantia de 7 dias • Pagamento Seguro</p>
+               <p>Acesso instantâneo • Receba pelo e-mail • Suporte incluso</p>
+           </div>
+
+           <div class="w-full h-px bg-gray-200 mb-8"></div>
+
+           <!-- Footer Links -->
+           <div class="w-full flex flex-col gap-8 text-left mb-8">
+               <div>
+                   <p class="text-[12px] text-gray-500 font-medium leading-relaxed pr-4">Transformando cozinhas em negócios lucrativos desde 2019.</p>
+               </div>
+               
+               <div class="grid grid-cols-2 gap-4 w-full">
+                   <div class="flex flex-col gap-3">
+                       <h4 class="text-gray-800 font-black text-[13px] mb-1">Links Úteis</h4>
+                       <a href="#" class="text-[12px] text-gray-500 font-medium hover:text-gray-800 transition">Termos de Uso</a>
+                       <a href="#" class="text-[12px] text-gray-500 font-medium hover:text-gray-800 transition">Política de Privacidade</a>
+                       <a href="#" class="text-[12px] text-gray-500 font-medium hover:text-gray-800 transition">Contato</a>
+                   </div>
+
+                   <div class="flex flex-col gap-3">
+                       <h4 class="text-gray-800 font-black text-[13px] mb-1">Contato</h4>
+                       <p class="text-[11px] text-gray-500 font-medium break-all flex items-start gap-2"><span class="mt-0.5">✉️</span> suporte@sorveteriaemcasa.com</p>
+                   </div>
+               </div>
+           </div>
+
+           <div class="w-full h-px bg-gray-200 mb-6"></div>
+
+           <!-- Missão & Copyright -->
+           <div class="text-center w-full">
+               <p class="text-[11px] text-gray-500 font-medium mb-4 px-2 leading-relaxed">
+                   <strong class="text-gray-700">Missão:</strong> Tornar o sorvete uma fonte de liberdade financeira para milhares de pessoas.
+               </p>
+               <p class="text-[10px] text-gray-400 font-medium">
+                   © 2026 Sorveteria em Casa. Todos os direitos reservados.
+               </p>
+           </div>
+       </div>
+
+   </div>
+
+   <script>
        function showUpsellPopup() { document.getElementById('upsellPopup').classList.remove('hidden'); }
        function closeUpsell() { document.getElementById('upsellPopup').classList.add('hidden'); }
 
-       function startTimer() {
-           let duration1 = 103;
-           let duration2 = 180;
-           const display1 = document.getElementById('countdown1');
-           const display2 = document.getElementById('countdown2');
-           const timer = setInterval(() => {
-               let min1 = parseInt(duration1 / 60, 10);
-               let sec1 = parseInt(duration1 % 60, 10);
-               min1 = min1 < 10 ? "0" + min1 : min1;
-               sec1 = sec1 < 10 ? "0" + sec1 : sec1;
-               if(display1) display1.textContent = "Desconto válido por: " + min1 + ":" + sec1;
-              
-               let min2 = parseInt(duration2 / 60, 10);
-               let sec2 = parseInt(duration2 % 60, 10);
-               min2 = min2 < 10 ? "0" + min2 : min2;
-               sec2 = sec2 < 10 ? "0" + sec2 : sec2;
-               if(display2) display2.textContent = min2 + ":" + sec2;
-
-               if (duration1 <= 0 && duration2 <= 0) { clearInterval(timer); }
-               if (duration1 > 0) duration1--;
-               if (duration2 > 0) duration2--;
-           }, 1000);
-       }
-
-       function startProgressBar() {
-           const fill = document.getElementById('progressBarFill');
-           const itemsCont = document.getElementById('loadingItems');
-           const items = [
-               "Separando Lista de Ingredientes...",
-               "Adicionando os 50 Sabores Gourmet...",
-               "Liberando Bônus de Caldas Especiais...",
-               "Configurando Script de Vendas no WhatsApp...",
-               "Gerando Certificado Oficial.."
-           ];
-           itemsCont.innerHTML = '';
-           let pct = 0; let itemIdx = 0;
-           const interval = setInterval(() => {
-               pct += 1.5;
-               if(pct >= 100) {
-                   pct = 100;
-                   clearInterval(interval);
-                   setTimeout(() => { showView('finalCheckoutPage'); startTimer(); }, 600);
-               }
-               fill.style.width = `${pct}%`;
-               if(pct >= (itemIdx * 20) && itemIdx < items.length) {
-                   const d = document.createElement('div');
-                   d.className = 'flex items-center text-gray-700 animate-fade justify-between border-b border-gray-200 pb-2';
-                   d.innerHTML = `<span>${items[itemIdx]}</span> <span class="text-[#10b981] font-black text-xl">✔</span>`;
-                   itemsCont.appendChild(d); itemIdx++;
-               }
-           }, 70);
-       }
-
-       function showLoadingPage() { showView('loadingPage'); startProgressBar(); }
-       
        document.addEventListener('DOMContentLoaded', () => { 
-           showView('landingPage'); 
-           
-           // Olheiro de Scroll (Intersection Observer) para ativar as animações na hora certa
+           // Olheiro de Scroll para animar os elementos (Fade Up)
            const observer = new IntersectionObserver((entries) => {
                entries.forEach(entry => {
                    if (entry.isIntersecting) {
                        entry.target.classList.add('is-visible');
-                       observer.unobserve(entry.target); // Faz animar apenas a primeira vez que passa
+                       observer.unobserve(entry.target); 
                    }
                });
-           }, { threshold: 0.15 });
+           }, { threshold: 0.10 });
 
-           document.querySelectorAll('.scroll-fade').forEach(el => {
+           document.querySelectorAll('.fade-up').forEach(el => {
                observer.observe(el);
            });
        });
