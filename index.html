@@ -3,14 +3,13 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-   <title>Sorveteria em Casa - Venda Todo Dia</title>
+   <title>Sorveteria em Casa - Lucro neste Fim de Semana</title>
   
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
    
    <link rel="preload" href="imagem1.webp" as="image" fetchpriority="high">
 
-   <!-- REMOVIDO O DEFER AQUI: Garante que o CSS carrega antes de mostrar a tela -->
    <script src="https://cdn.tailwindcss.com"></script>
   
    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,900;1,700;1,900&family=Playfair+Display:ital,wght@1,600;1,700;1,800&display=swap" rel="stylesheet">
@@ -237,16 +236,15 @@
        
        body {
            font-family: 'Inter', sans-serif;
-           background-color: #ffffff; /* Fundo branco puro para remover o efeito de caixa */
-           color: #111827; /* Texto escuro primário */
+           background-color: #ffffff;
+           color: #111827;
            margin: 0;
            padding: 0;
            overflow-x: hidden;
            -webkit-font-smoothing: antialiased;
        }
 
-       /* Tema de cores focado no Light + Pink/Green (Alta Conversão) */
-       .text-brand { color: #db2777; } /* Pink 600 do Sorvete */
+       .text-brand { color: #db2777; }
        .bg-brand { background-color: #db2777; }
        
        .card-light {
@@ -256,12 +254,10 @@
            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
        }
 
-       /* Brilho da Imagem Hero (Sutil e Elegante) */
        .glow-image {
            box-shadow: 0 15px 40px -10px rgba(219, 39, 119, 0.25);
        }
 
-       /* Botão Pulsante Verde (Cor universal de Compra) */
        .btn-primary {
            background: linear-gradient(to right, #10b981, #059669);
            color: white;
@@ -277,7 +273,6 @@
        }
        .animate-pulse-btn { animation: pulse-btn 2.5s infinite; }
 
-       /* Animação de entrada no scroll */
        .fade-up {
            opacity: 0;
            transform: translateY(20px);
@@ -291,14 +286,12 @@
 </head>
 <body class="w-full flex flex-col items-center">
 
-   <!-- POPUP DE UPSELL (DOWNSELL OCULTO PARA 19,90) -->
+   <!-- POPUP DE UPSELL -->
    <div id="upsellPopup" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
        <div class="bg-white rounded-2xl shadow-2xl max-w-[400px] w-full p-6 relative text-gray-900 border-t-8 border-[#10b981] animate-fade">
            
-           <!-- BOTÃO FECHAR (X) -->
            <button onclick="closeUpsell()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-700 transition text-2xl font-black leading-none" aria-label="Fechar">&times;</button>
            
-           <!-- Barra de progresso falsa -->
            <div class="w-full bg-gray-200 rounded-full h-2 mb-4 mt-2">
              <div class="bg-[#10b981] h-2 rounded-full w-[80%] animate-pulse"></div>
            </div>
@@ -307,7 +300,7 @@
            <h3 class="text-2xl font-black text-gray-900 mb-3 leading-tight text-center">Você desbloqueou um<br><span class="text-brand">Desconto Secreto!</span></h3>
            
            <p class="text-[13px] text-gray-600 font-medium mb-5 leading-relaxed text-center">
-               Em vez de pagar R$ 14,90 apenas pelo básico, que tal adicionar <strong class="text-[#10b981] bg-green-50 px-1 rounded">apenas R$ 5,00</strong> e levar o <strong class="text-gray-900">TREINAMENTO VIP COMPLETO</strong>? É um acréscimo ridículo para ter acesso a tudo:
+               Em vez de pagar R$ 14,90 apenas pelo PDF básico, que tal adicionar <strong class="text-[#10b981] bg-green-50 px-1 rounded">apenas R$ 5,00</strong> e levar a <strong class="text-gray-900">EXECUÇÃO EM VÍDEO + OS 8 PRESENTES</strong>? É um acréscimo ridículo para ver a massa base sendo feita na prática:
            </p>
 
            <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl text-left mb-5 space-y-2.5 shadow-inner">
@@ -324,30 +317,27 @@
                </div>
            </div>
            
-           <!-- ATENÇÃO: COLOQUE AQUI O SEU LINK DA YAMPI PARA O PRODUTO DE R$ 19,90 -->
            <a href="https://confeiteira-mari.pay.yampi.com.br/r/AQE79N3KQE" class="animate-pulse-btn block w-full py-4 btn-primary font-black rounded-xl text-[1.05rem] uppercase text-center mb-3">
                SIM! QUERO TUDO POR R$ 19,90
            </a>
            
-           <!-- LINK DO PRODUTO BÁSICO DE 14,90 -->
            <a href="https://confeiteira-mari.pay.yampi.com.br/r/17JASRMC9L" class="block text-[11px] text-gray-400 font-medium hover:text-gray-600 transition text-center px-4 leading-tight underline">
                Não, obrigado. Quero perder os vídeos e bônus e ficar só com o e-book por R$ 14,90.
            </a>
        </div>
    </div>
 
-   <!-- WRAPPER MOBILE FIRST -->
    <div class="w-full max-w-[480px] flex flex-col items-center bg-white relative min-h-screen">
 
-       <!-- HERO SECTION -->
+       <!-- HERO SECTION (PIVOTADA - FOCO AGILIDADE) -->
        <div class="w-full flex flex-col items-center pt-10 pb-8 px-5 z-10 relative">
            
            <h1 class="text-[26px] md:text-[30px] font-black leading-[1.15] tracking-tight mb-4 text-center text-gray-900">
-               Pare de perder dinheiro. <span class="text-brand">Aprenda a fazer sorvetes que vendem sozinhos</span> e fature até R$300/dia.
+               Faça amanhã, lucre no fim de semana: <span class="text-brand">15 receitas exatas</span> de sorvete de liquidificador para vender rápido.
            </h1>
            
            <p class="text-[14px] text-gray-600 font-medium mb-6 text-center px-2">
-               O método caseiro com lucro acima de 300% para você aproveitar o calor sem precisar de experiência ou máquinas caras.
+               O plano prático de 48 horas: Copie o segredo da nossa "Massa Base", use o que já tem na cozinha e coloque seus primeiros R$ 300 no bolso em tempo recorde.
            </p>
            
            <!-- ÂNCORA DE PREÇO -->
@@ -358,10 +348,9 @@
            </div>
 
            <button onclick="document.getElementById('checkoutSection').scrollIntoView({behavior: 'smooth'})" class="animate-pulse-btn w-full py-4 px-6 btn-primary font-black text-[1.1rem] rounded-xl uppercase tracking-wider mb-8">
-               QUERO COMEÇAR A LUCRAR
+               QUERO LUCRAR NESTE FIM DE SEMANA
            </button>
 
-           <!-- IMAGEM HERO (SOLTA/TRANSPARENTE) -->
            <div class="relative w-full flex justify-center items-center mb-4">
                <img src="imagem1.webp" fetchpriority="high" decoding="async" alt="Sorvete Artesanal" class="w-full h-auto">
            </div>
@@ -375,18 +364,16 @@
            </h2>
 
            <div class="w-full card-light p-5 flex flex-col gap-4 text-left">
-               <!-- Check 1 -->
                <div class="flex items-start gap-4 pb-4 border-b border-gray-100">
                    <div class="w-6 h-6 rounded-full bg-pink-50 border border-pink-200 flex items-center justify-center shrink-0 mt-0.5">
                        <span class="text-brand text-xs font-black">✔</span>
                    </div>
                    <div>
                        <h4 class="font-bold text-gray-900 text-[15px] mb-1">Sem Máquina Cara</h4>
-                       <p class="text-[13px] text-gray-600 leading-relaxed">Faça sorvetes hiper cremosos e profissionais usando apenas o que você já tem na cozinha.</p>
+                       <p class="text-[13px] text-gray-600 leading-relaxed">Faça sorvetes hiper cremosos e profissionais usando apenas o liquidificador que você já tem na cozinha.</p>
                    </div>
                </div>
                
-               <!-- Check 2 -->
                <div class="flex items-start gap-4 pb-4 border-b border-gray-100">
                    <div class="w-6 h-6 rounded-full bg-pink-50 border border-pink-200 flex items-center justify-center shrink-0 mt-0.5">
                        <span class="text-brand text-xs font-black">✔</span>
@@ -397,31 +384,29 @@
                    </div>
                </div>
 
-               <!-- Check 3 -->
                <div class="flex items-start gap-4 pb-4 border-b border-gray-100">
                    <div class="w-6 h-6 rounded-full bg-pink-50 border border-pink-200 flex items-center justify-center shrink-0 mt-0.5">
                        <span class="text-brand text-xs font-black">✔</span>
                    </div>
                    <div>
-                       <h4 class="font-bold text-gray-900 text-[15px] mb-1">Custo Baixo, Margem Alta</h4>
-                       <p class="text-[13px] text-gray-600 leading-relaxed">Gaste menos de R$ 8,00 para produzir um litro e venda com preço de sorveteria premium (R$ 35+).</p>
+                       <h4 class="font-bold text-gray-900 text-[15px] mb-1">A Matemática do Lucro Real</h4>
+                       <p class="text-[13px] text-gray-600 leading-relaxed">Você gasta em média R$ 2,15 de ingredientes para encher um pote de 250ml e vende fácil por R$ 12,00 no seu bairro.</p>
                    </div>
                </div>
 
-               <!-- Check 4 -->
                <div class="flex items-start gap-4">
                    <div class="w-6 h-6 rounded-full bg-pink-50 border border-pink-200 flex items-center justify-center shrink-0 mt-0.5">
                        <span class="text-brand text-xs font-black">✔</span>
                    </div>
                    <div>
-                       <h4 class="font-bold text-gray-900 text-[15px] mb-1">+15 Sabores Gourmet</h4>
-                       <p class="text-[13px] text-gray-600 leading-relaxed">De Ninho com Nutella a Pudim. Um cardápio enxuto e lucrativo para você vender no iFood ou WhatsApp todo dia.</p>
+                       <h4 class="font-bold text-gray-900 text-[15px] mb-1">Pronto em poucas horas</h4>
+                       <p class="text-[13px] text-gray-600 leading-relaxed">Você bate no liquidificador hoje e amanhã já tem 15 sabores gourmet (como Ninho com Nutella) prontos para colar o rótulo e vender.</p>
                    </div>
                </div>
            </div>
        </div>
 
-       <!-- SHOWCASE / VITRINE (GRID 2x2) -->
+       <!-- SHOWCASE / VITRINE -->
        <div class="w-full flex flex-col items-center px-5 pt-8 pb-10 fade-up text-center">
            <h2 class="text-[18px] md:text-[20px] font-black text-gray-900 uppercase tracking-tighter mb-0.5">
                VOCÊ VAI APRENDER A FAZER
@@ -430,7 +415,6 @@
                ESSAS OBRAS DE ARTE:
            </h3>
            
-           <!-- Grid 2x2 -->
            <div class="grid grid-cols-2 gap-3 w-full">
                <img src="grid1.webp" loading="lazy" class="w-full aspect-square object-cover rounded-2xl shadow-sm border border-gray-100">
                <img src="grid2.webp" loading="lazy" class="w-full aspect-square object-cover rounded-2xl shadow-sm border border-gray-100">
@@ -439,10 +423,9 @@
            </div>
        </div>
 
-       <!-- O QUE VAI RECEBER (ENTREGÁVEIS + EMPILHAMENTO DE BÔNUS) -->
+       <!-- O QUE VAI RECEBER (REMOVIDO A PALAVRA CURSO) -->
        <div class="w-full flex flex-col px-5 pt-8 pb-10 fade-up bg-gray-50 border-t border-gray-100">
            
-           <!-- PRODUTO PRINCIPAL -->
            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8 relative mt-2 mb-10">
                <div class="absolute top-0 right-0 bg-[#fbbf24] text-gray-900 font-black px-4 py-1.5 rounded-bl-xl text-[10px] uppercase tracking-widest">ACESSO IMEDIATO VIA WHATSAPP</div>
                
@@ -451,24 +434,19 @@
                </h3>
                
                <ul class="space-y-4 text-[13px] md:text-[14px] font-bold text-gray-700">
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Treinamento Completo com Aulas Gravadas</span></li>
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Passo a passo para vender seus primeiros potes em 24h</span></li>
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Técnica da <strong class="text-brand">Massa Base</strong> que rende muito</span></li>
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Mais de <strong class="text-brand">15 Sabores Gourmet</strong></span></li>
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Ferramenta secreta para vender todo dia no WhatsApp</span></li>
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Calculadora para precificar seus sorvetes</span></li>
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Acesso vitalício ao material</span></li>
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Acesso ao grupo do WhatsApp para dúvidas</span></li>
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Aplicativo para facilitar nas aulas</span></li>
-                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Certificado Oficial de Especialista em Gelados</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>A técnica secreta da <strong class="text-brand">Massa Base</strong> (Passo a passo visual)</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span><strong class="text-brand">Lista de Compras Exata:</strong> O que trazer do mercado amanhã com R$ 50</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span><strong class="text-brand">Rótulos Profissionais:</strong> Moldes prontos para imprimir e colar nos potes</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Cardápio em PDF com fotos reais para mandar no WhatsApp</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Calculadora Automática para precificar os ingredientes</span></li>
+                   <li class="flex items-start gap-3"><span class="text-[#10b981] text-lg leading-none">✔</span> <span>Acesso vitalício ao material em vídeo e guias</span></li>
                </ul>
                
                <div class="mt-6 pt-5 border-t border-gray-100 text-center">
-                   <p class="text-[13px] md:text-[14px] font-black text-gray-900 uppercase italic tracking-tighter">TRANSFORME SEU FREEZER EM UMA<br><span class="text-[#10b981] text-[15px] md:text-[16px]">FÁBRICA DE DINHEIRO HOJE MESMO.</span></p>
+                   <p class="text-[13px] md:text-[14px] font-black text-gray-900 uppercase italic tracking-tighter">TRANSFORME SEU FREEZER EM UMA<br><span class="text-[#10b981] text-[15px] md:text-[16px]">FÁBRICA DE DINHEIRO EM 48 HORAS.</span></p>
                </div>
            </div>
 
-           <!-- EMPILHAMENTO DE BÔNUS (VALUE STACKING) -->
            <div class="w-full text-center mb-4">
                <span class="inline-block bg-red-100 text-red-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-3">APENAS HOJE</span>
                <h3 class="text-xl md:text-2xl font-black text-gray-900 leading-tight">
@@ -476,9 +454,7 @@
                </h3>
            </div>
 
-           <!-- GRID DE BÔNUS (7 ITENS) -->
            <div class="grid grid-cols-1 gap-3 w-full mt-4">
-               
                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
                    <div class="absolute top-3 left-4 bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BÔNUS #1</div>
                    <div class="absolute top-3 right-4 text-[11px] text-gray-400 line-through font-bold">R$ 97</div>
@@ -489,8 +465,8 @@
                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
                    <div class="absolute top-3 left-4 bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BÔNUS #2</div>
                    <div class="absolute top-3 right-4 text-[11px] text-gray-400 line-through font-bold">R$ 67</div>
-                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Kit Utensílios & Marcas</h4>
-                   <p class="text-[12px] text-gray-600 leading-relaxed">A lista definitiva de ingredientes secretos e marcas que barateiam seu custo sem perder a qualidade premium.</p>
+                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Pack de Rótulos Profissionais</h4>
+                   <p class="text-[12px] text-gray-600 leading-relaxed">Arquivos editáveis no Canva. É só colocar o seu nome, imprimir e colar nos potes para cobrar mais caro pela apresentação.</p>
                </div>
 
                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
@@ -510,8 +486,8 @@
                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
                    <div class="absolute top-3 left-4 bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BÔNUS #5</div>
                    <div class="absolute top-3 right-4 text-[11px] text-gray-400 line-through font-bold">R$ 97</div>
-                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Máquina de Vendas no WhatsApp</h4>
-                   <p class="text-[12px] text-gray-600 leading-relaxed">Copie e cole meus roteiros de vendas para fechar encomendas com vizinhos, grupos do bairro e eventos.</p>
+                   <h4 class="font-black text-[14px] text-gray-900 mb-1 leading-tight">Cardápio Magnético de WhatsApp</h4>
+                   <p class="text-[12px] text-gray-600 leading-relaxed">Um PDF pronto com fotos de dar água na boca e os seus preços. É só encaminhar nos grupos do condomínio e anotar os pedidos.</p>
                </div>
 
                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative pt-10">
@@ -535,7 +511,6 @@
            </button>
        </div>
 
-       <!-- PROVA SOCIAL / DEPOIMENTOS -->
        <div class="w-full flex flex-col items-center px-5 pt-8 pb-10 fade-up text-center border-t border-gray-100">
            <h2 class="text-2xl font-black leading-tight text-gray-900 mb-6">
                Quem testou, <span class="text-brand">Aprovou!</span>
@@ -575,14 +550,13 @@
                Escolha seu plano e <br>comece a lucrar hoje.
            </h2>
 
-           <!-- PLANO VIP (DESTAQUE) -->
+           <!-- PLANO VIP -->
            <div class="bg-white border-2 border-[#10b981] rounded-2xl p-6 mb-6 relative shadow-2xl">
                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#10b981] text-white font-black px-4 py-1 rounded-full text-[10px] uppercase tracking-widest">MAIS VENDIDO</div>
                
                <h4 class="text-[18px] font-black text-center mt-2 text-gray-900">Plano Completo (VIP)</h4>
-               <p class="text-[11px] text-gray-500 text-center mt-1">Vídeo Aulas + E-book + Ferramentas</p>
+               <p class="text-[11px] text-gray-500 text-center mt-1">O Método da Massa Base em Vídeo + Todas as Ferramentas</p>
                
-               <!-- IMAGEM DO PRODUTO (LIMPA E SEM CAIXA) -->
                <div class="flex justify-center my-4">
                    <img src="imagem27.webp" alt="Pacote VIP Sorveteria" class="h-[160px] w-auto transform hover:scale-105 transition-transform duration-300">
                </div>
@@ -590,9 +564,9 @@
                <div class="space-y-3 my-5 font-medium text-[12px] text-gray-700">
                    <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Vídeo Aulas Passo a Passo</span></p>
                    <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Técnica da Massa Base e +15 Sabores</span></p>
-                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Calculadora Automática de Lucro</span></p>
+                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Rótulos Editáveis e Cardápio de WhatsApp</span></p>
                    <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Os 8 Presentes Exclusivos Inclusos</span></p>
-                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Certificado Oficial</span></p>
+                   <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Lista Exata de Supermercado</span></p>
                </div>
                
                <div class="text-center mb-5 border-t border-gray-100 pt-4">
@@ -601,30 +575,28 @@
                </div>
                
                <a href="https://confeiteira-mari.pay.yampi.com.br/r/FRIA4GCN1E" class="block w-full py-4 btn-primary font-black rounded-xl text-center uppercase tracking-wider text-[1.1rem]">
-                   COMPRAR PLANO VIP
+                   COMEÇAR O PLANO VIP AGORA
                </a>
            </div>
 
            <!-- PLANO BÁSICO -->
            <div class="card-light p-6 mb-8 border border-gray-200">
-               <h4 class="text-[16px] font-black text-center text-gray-800">Apostila Digital (Básico)</h4>
+               <h4 class="text-[16px] font-black text-center text-gray-800">O Guia Prático (Básico)</h4>
                <p class="text-[11px] text-gray-500 text-center mt-1">Apenas as receitas em texto</p>
                
                <div class="space-y-3 my-5 font-medium text-[12px] text-gray-500">
                    <p class="flex items-start gap-2"><span class="text-[#10b981] font-bold text-sm">✔</span> <span>Apenas Receitas em Texto</span></p>
-                   <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-400 font-bold text-sm">✗</span> <span>Vídeo Aulas Passo a Passo</span></p>
+                   <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-400 font-bold text-sm">✗</span> <span>Lista Exata de Supermercado</span></p>
+                   <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-400 font-bold text-sm">✗</span> <span>Pack de Rótulos Prontos para Imprimir</span></p>
                    <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-400 font-bold text-sm">✗</span> <span>Todos os 8 Presentes Extras</span></p>
-                   <p class="flex items-start gap-2 text-gray-400 line-through"><span class="text-red-400 font-bold text-sm">✗</span> <span>Certificado Oficial</span></p>
                </div>
                
                <div class="flex items-center justify-between gap-4 mt-4 border-t border-gray-100 pt-5">
                    <span class="text-[24px] font-black text-gray-900 tracking-tighter">R$ 14,90</span>
-                   <!-- Dispara o Popup de Upsell -->
                    <button onclick="showUpsellPopup()" class="px-4 py-3 bg-gray-50 text-gray-600 font-bold text-[11px] rounded-lg uppercase hover:bg-gray-100 transition-colors border border-gray-200 tracking-wider">COMPRAR BÁSICO</button>
                </div>
            </div>
 
-           <!-- GARANTIA -->
            <div class="flex flex-col items-center justify-center text-center p-5 bg-green-50 border border-green-100 rounded-xl w-full">
                <div class="text-green-500 text-3xl mb-2">🛡️</div>
                <h4 class="font-black text-gray-900 text-[14px] mb-1">Garantia Incondicional de 7 Dias</h4>
@@ -632,7 +604,6 @@
            </div>
        </div>
 
-       <!-- FAQ INTERATIVO -->
        <div class="w-full flex flex-col px-5 pt-8 pb-10 fade-up bg-gray-50 border-t border-gray-200">
            <h2 class="text-xl font-black leading-tight text-gray-900 mb-6 text-center">
                Ainda tem <span class="text-brand">Dúvidas?</span>
@@ -673,32 +644,26 @@
            </div>
        </div>
 
-       <!-- FINAL CTA & FOOTER (LIGHT MODE - CLEAN) -->
        <div class="w-full flex flex-col items-center bg-white text-gray-900 pt-12 pb-8 px-6 border-t border-gray-200">
            
-           <!-- Tag / Badge -->
            <div class="flex items-center gap-3 mb-6">
                <div class="bg-[#ef4444] text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
                    <span>🔥</span> ÚLTIMAS VAGAS COM DESCONTO
                </div>
            </div>
 
-           <!-- Headline -->
            <h2 class="text-[28px] md:text-[32px] font-black text-center leading-[1.1] mb-5">
                O preço de <span class="text-[#10b981]">R$ 14,90</span> é por tempo limitado!
            </h2>
 
-           <!-- Subheadline -->
            <p class="text-[14px] md:text-[15px] text-gray-600 font-medium text-center mb-8 px-2 leading-relaxed">
-               Depois dessa promoção, o valor volta para <span class="line-through text-gray-400">R$ 197,00</span>. Garanta agora e comece a lucrar hoje mesmo.
+               Não espere a semana virar. Garanta agora, bata os ingredientes amanhã e veja o dinheiro entrar neste fim de semana.
            </p>
 
-           <!-- Botão de Impulso (Puxa do btn-primary verde) -->
            <button onclick="document.getElementById('checkoutSection').scrollIntoView({behavior: 'smooth'})" class="animate-pulse-btn w-full py-5 btn-primary font-black text-[1.1rem] rounded-xl uppercase tracking-wider mb-6">
                🔥 Quero Garantir Minha Vaga!
            </button>
 
-           <!-- Trust Badges -->
            <div class="flex flex-col items-center gap-2 text-[11px] text-gray-500 mb-10 text-center font-medium">
                <p class="flex items-center gap-1.5"><span class="text-[#10b981] text-sm">🛡️</span> Garantia de 7 dias • Pagamento Seguro</p>
                <p>Acesso instantâneo • Receba pelo WhatsApp • Suporte incluso</p>
@@ -706,7 +671,6 @@
 
            <div class="w-full h-px bg-gray-200 mb-8"></div>
 
-           <!-- Footer Links -->
            <div class="w-full flex flex-col gap-8 text-left mb-8">
                <div>
                    <p class="text-[12px] text-gray-500 font-medium leading-relaxed pr-4">Transformando cozinhas em negócios lucrativos desde 2019.</p>
@@ -729,7 +693,6 @@
 
            <div class="w-full h-px bg-gray-200 mb-6"></div>
 
-           <!-- Missão & Copyright -->
            <div class="text-center w-full">
                <p class="text-[11px] text-gray-500 font-medium mb-4 px-2 leading-relaxed">
                    <strong class="text-gray-700">Missão:</strong> Tornar o sorvete uma fonte de liberdade financeira para milhares de pessoas.
@@ -747,7 +710,6 @@
        function closeUpsell() { document.getElementById('upsellPopup').classList.add('hidden'); }
 
        document.addEventListener('DOMContentLoaded', () => { 
-           // Olheiro de Scroll para animar os elementos (Fade Up)
            const observer = new IntersectionObserver((entries) => {
                entries.forEach(entry => {
                    if (entry.isIntersecting) {
